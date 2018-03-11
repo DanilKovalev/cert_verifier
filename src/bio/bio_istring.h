@@ -1,7 +1,8 @@
 #pragma once
 
 #include <openssl/bio.h>
-#include <iostream>
+
+#include <string>
 
 class bio_istring
 {
@@ -14,7 +15,8 @@ public:
 
     BIO* get_bio();
 
-    size_t getline(char *s, std::streamsize n, char delim = '\n');
+    size_t  getline(char *s, size_t n, char delim = '\n');
+    size_t read(char *s, size_t n);
 
     void destroy();
 private:

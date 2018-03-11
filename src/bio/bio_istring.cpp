@@ -3,7 +3,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <sstream>
-
+#include <iostream>
 #include <cstring>
 
 bio_istring::bio_istring(const std::string *pStr)
@@ -28,14 +28,37 @@ bio_istring::~bio_istring()
     }
 }
 
-size_t bio_istring::getline(char *s, std::streamsize n, char delim)
+size_t  bio_istring::getline(char *s, size_t nRead, char delim)
 {
-    std::istringstream ss(*m_pStr);
-    ss.seekg(m_offset);
-    ss.getline(s, n, delim);
-    std::streamsize nRead = ss.gcount();
+    size_t length = m_pStr->size() - m_offset;
+
+    if(nRead - 1 <  length)
+        length = nRead - 1;
+
+    for(size_t i = 0; i < length; i++)
+    {
+        if ((*m_pStr)[m_offset + i] == delim)
+        {
+            length = i + 1;
+            break;
+        }
+    }
+
+    nRead = read(s, length);
+    if(nRead > 0)
+        s[nRead] = '\0';
+
+    return nRead;
+}
+
+size_t bio_istring::read(char *s, size_t nRead)
+{
+    if (nRead + m_offset > m_pStr->size())
+        nRead = m_pStr->size() - m_offset + 1;
+
+    memcpy(s, m_pStr->data() + m_offset, nRead);
     m_offset += nRead;
-    return boost::numeric_cast<size_t>( nRead );
+    return nRead;
 }
 
 BIO* bio_istring::get_bio()
@@ -79,18 +102,14 @@ int bio_istring::s_read( BIO* pBio, char* pBuf, int bufLen )
 {
     auto nRead = boost::numeric_cast<size_t>(bufLen);
     auto* pBio_str = static_cast<bio_istring*>(pBio->ptr);
-    if (nRead + pBio_str->m_offset > pBio_str->m_pStr->size())
-        nRead = pBio_str->m_pStr->length() - pBio_str->m_offset + 1;
-
-    memcpy(pBuf, pBio_str->m_pStr->data() + pBio_str->m_offset, nRead);
-    pBio_str->m_offset += nRead;
-    return nRead;
+    return boost::numeric_cast<int>(pBio_str->read(pBuf, nRead));
 }
 
 int bio_istring::s_gets( BIO* pBio, char* pBuf, int bufLen )
 {
+    auto nRead = boost::numeric_cast<size_t>(bufLen);
     auto* pBio_str = static_cast<bio_istring*>(pBio->ptr);
-    return pBio_str->getline(pBuf, bufLen);
+    return boost::numeric_cast<int>(pBio_str->getline(pBuf, nRead));
 }
 
 long bio_istring::s_ctrl( BIO* pBio, int cmd, long num, void *ptr )

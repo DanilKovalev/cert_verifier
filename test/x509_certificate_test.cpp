@@ -15,8 +15,6 @@ TEST_CASE( "Cert read", "[cert]" )
         std::__throw_system_error(errno);
 
     std::string pem((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-    x509_certificate certificate = x509_certificate::from_pem(pem);
-    std::cout << certificate.get_issuer_name() << std::endl;
+    REQUIRE_NOTHROW(x509_certificate::from_pem(pem));
 }
 

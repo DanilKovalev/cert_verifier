@@ -5,10 +5,6 @@
 #include "bio_guard.h"
 
 #include <openssl/pem.h>
-#include <openssl/err.h>
-
-#include <memory>
-
 
 x509_certificate::x509_certificate(X509 *pCert)
 : m_pCert(pCert)
@@ -49,7 +45,7 @@ x509_certificate& x509_certificate::operator =(const x509_certificate& rhs)
 std::vector<std::uint8_t> x509_certificate::digest(const EVP_MD* type) const
 {
     std::vector<std::uint8_t> fingerprint(static_cast<size_t >(EVP_MD_size(type)), 0);
-    if(X509_digest(m_pCert, type, fingerprint.data(), NULL) != 1)
+    if(X509_digest(m_pCert, type, fingerprint.data(), nullptr) != 1)
         throw std::runtime_error("X509_digest failed.");
 
     return fingerprint;
@@ -57,7 +53,7 @@ std::vector<std::uint8_t> x509_certificate::digest(const EVP_MD* type) const
 
 std::string x509_certificate::get_issuer_name() const
 {
-    char* name = X509_NAME_oneline(X509_get_issuer_name(m_pCert), NULL, 0);
+    char* name = X509_NAME_oneline(X509_get_issuer_name(m_pCert), nullptr, 0);
 
     std::string name_str(name);
     OPENSSL_free(name);
@@ -67,7 +63,7 @@ std::string x509_certificate::get_issuer_name() const
 
 std::string x509_certificate::get_subject_name() const
 {
-    char* name = X509_NAME_oneline(X509_get_subject_name(m_pCert), NULL, 0);
+    char* name = X509_NAME_oneline(X509_get_subject_name(m_pCert), nullptr, 0);
 
     std::string name_str(name);
     OPENSSL_free(name);
@@ -107,30 +103,9 @@ x509_certificate x509_certificate::from_pem(const std::string &pem)
 {
     bio_istring bio(&pem);
 
-    int len = static_cast<int>(pem.size());
-    bio_ptr ptrBio =
-            create_bio_guard(BIO_new_mem_buf(static_cast<const void *>(pem.c_str()), len));
-
-    if(!ptrBio)
-        std::__throw_runtime_error("Failed to create bio mem buffer");
-
-    char BUFFER[256] = {0};
-    size_t r;
-    while ((r = BIO_gets(ptrBio.get(), BUFFER, 254)) != 0)
-    {
-        std::cout << r << std::endl;
-        std::cout << std::string(BUFFER).size() << std::endl;
-        std::cout << BUFFER << std::endl;
-    }
-
     X509* pCert = nullptr;
     if( !PEM_read_bio_X509(bio.get_bio(), &pCert, nullptr, nullptr) )
-    {
-        int err = ERR_get_error();
-        const char* str_err = ERR_error_string(err, 0);
-        std::__throw_runtime_error(str_err);
         std::__throw_runtime_error("Failed to read X509 certificate");
-    }
 
     return x509_certificate(pCert);
 }
