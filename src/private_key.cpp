@@ -1,7 +1,9 @@
 #include "private_key.h"
-#include "bio_guard.h"
+#include "bio/bio_ostring.h"
+#include "bio/bio_istring.h"
 
 #include <openssl/pem.h>
+#include <utility>
 
 private_key::private_key(EVP_PKEY *pKey) noexcept
 : m_pKey(pKey)
@@ -36,15 +38,10 @@ const EVP_PKEY* private_key::raw() const noexcept
 
 private_key private_key::from_pem(const std::string& pem)
 {
-    int len = static_cast<int>(pem.size());
-    bio_ptr ptrBio =
-            create_bio_guard(BIO_new_mem_buf(static_cast<const void *>(pem.c_str()), len));
-
-    if(!ptrBio)
-        std::__throw_runtime_error("Failed to create bio mem buffer");
+    bio_istring bio(&pem);
 
     EVP_PKEY* pRaw_key = nullptr;
-    if( !PEM_read_bio_PrivateKey(ptrBio.get(), &pRaw_key, nullptr, nullptr) )
+    if( !PEM_read_bio_PrivateKey(bio.get_bio(), &pRaw_key, nullptr, nullptr) )
         std::__throw_runtime_error("Failed to read private key");
 
     return private_key(pRaw_key);
@@ -52,14 +49,12 @@ private_key private_key::from_pem(const std::string& pem)
 
 std::string private_key::to_pem() const
 {
-    bio_ptr ptrBio = create_bio_guard(BIO_new(BIO_s_mem()));
-    if( !PEM_write_bio_PrivateKey(ptrBio.get(), m_pKey, nullptr, nullptr, 0, 0, nullptr))
+    bio_ostring bio;
+
+    if( !PEM_write_bio_PrivateKey(bio.get_bio(), m_pKey, nullptr, nullptr, 0, 0, nullptr))
         std::__throw_runtime_error("Failed to write private key");
 
-    std::string pem(ptrBio->num_write, '\0');
-    BIO_read(ptrBio.get(), &pem[0], static_cast<int>(ptrBio->num_write));
-
-    return pem;
+    return bio.detach_string();
 }
 
 void private_key::free()
