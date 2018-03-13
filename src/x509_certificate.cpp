@@ -2,7 +2,7 @@
 
 #include "bio/bio_istring.h"
 #include "bio/bio_ostring.h"
-#include "bio_guard.h"
+#include "bio/bio_guard.h"
 
 #include <openssl/pem.h>
 

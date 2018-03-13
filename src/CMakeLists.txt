@@ -1,4 +1,4 @@
-include_directories("./")
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 file(GLOB_RECURSE SOURCE_FILES
         "*.cpp"
