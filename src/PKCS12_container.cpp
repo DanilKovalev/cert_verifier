@@ -1,25 +1,23 @@
 #include "PKCS12_container.h"
 
-#include <openssl/pkcs12.h>
-
+#include "bio/bio_guard.h"
+#include <boost/numeric/conversion/cast.hpp>
 #include <stdexcept>
 
 
-PKCS12_container *PKCS12_container::from_der(const std::string& der)
+PKCS12_container::PKCS12_container(PKCS12 *pRaw)
+ : m_pRaw(pRaw)
 {
-    const uint8_t* rawData = reinterpret_cast<const uint8_t *>(der.c_str());
+}
+
+PKCS12_container PKCS12_container::from_der(const std::vector<uint8_t>& der)
+{
+    auto len = boost::numeric_cast<int>(der.size());
+    auto bio = create_bio_guard(BIO_new_mem_buf(der.data(), len));
+
     PKCS12* pRaw;
-    long len = static_cast<long>(der.length());
-    if ( d2i_PKCS12(&pRaw, &rawData, len ) )
-        throw std::runtime_error("d2i_PKCS12 failed");
+    if ( d2i_PKCS12_bio(bio.get(), &pRaw))
+        throw std::runtime_error("d2i_PKCS12_bio failed");
 
-    EVP_PKEY* raw_key;
-    X509* raw_cert;
-    stack_st_X509* raw_certs;
-
-    if (PKCS12_parse(pRaw, nullptr, &raw_key, &raw_cert, &raw_certs) != 1)
-        throw std::runtime_error("PKCS12_parse failed");
-
-
-    PKCS12_container pkcs12_container;
+    return PKCS12_container(pRaw);
 }
