@@ -1,4 +1,4 @@
-#include "bio/bio_istring.h"
+#include "bio_istring.h"
 
 #include <boost/numeric/conversion/cast.hpp>
 
