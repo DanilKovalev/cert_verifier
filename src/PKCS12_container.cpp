@@ -1,7 +1,10 @@
 #include "PKCS12_container.h"
 
 #include "bio/bio_guard.h"
+#include "ssl_exc.h"
+
 #include <boost/numeric/conversion/cast.hpp>
+
 #include <stdexcept>
 
 
@@ -17,7 +20,7 @@ PKCS12_container PKCS12_container::from_der(const std::vector<uint8_t>& der)
 
     PKCS12* pRaw;
     if ( d2i_PKCS12_bio(bio.get(), &pRaw))
-        throw std::runtime_error("d2i_PKCS12_bio failed");
+        throw ssl_exc("d2i_PKCS12_bio failed");
 
     return PKCS12_container(pRaw);
 }

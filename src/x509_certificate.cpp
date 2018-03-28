@@ -3,6 +3,7 @@
 #include "bio/bio_istring.h"
 #include "bio/bio_ostring.h"
 #include "bio/bio_guard.h"
+#include "ssl_exc.h"
 
 #include <openssl/pem.h>
 
@@ -46,7 +47,7 @@ std::vector<std::uint8_t> x509_certificate::digest(const EVP_MD* type) const
 {
     std::vector<std::uint8_t> fingerprint(static_cast<size_t >(EVP_MD_size(type)), 0);
     if(X509_digest(m_pCert, type, fingerprint.data(), nullptr) != 1)
-        throw std::runtime_error("X509_digest failed.");
+        throw ssl_exc("X509_digest failed.");
 
     return fingerprint;
 }
@@ -76,7 +77,7 @@ X509* x509_certificate::duplicate(X509 *pCert)
 {
     X509* result = X509_dup(pCert);
     if(result == nullptr)
-        std::__throw_runtime_error("Failed to duplicate X509 certificate");
+        throw ssl_exc("Failed to duplicate X509 certificate");
 
     return result;
 }
@@ -105,7 +106,7 @@ x509_certificate x509_certificate::from_pem(const std::string &pem)
 
     X509* pCert = nullptr;
     if( !PEM_read_bio_X509(bio.get_bio(), &pCert, nullptr, nullptr) )
-        std::__throw_runtime_error("Failed to read X509 certificate");
+        throw ssl_exc("Failed to read X509 certificate");
 
     return x509_certificate(pCert);
 }
@@ -115,7 +116,7 @@ std::string x509_certificate::to_pem() const
 {
     bio_ostring bio;
     if( !PEM_write_bio_X509(bio.get_bio(), m_pCert))
-        std::__throw_runtime_error("Failed to write X509 certificate");
+        throw ssl_exc("Failed to write X509 certificate");
 
     return bio.detach_string();
 }
