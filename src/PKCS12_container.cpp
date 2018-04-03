@@ -7,7 +7,6 @@
 
 #include <stdexcept>
 
-
 PKCS12_container::PKCS12_container(PKCS12 *pRaw)
  : m_pRaw(pRaw)
 {
@@ -22,5 +21,5 @@ PKCS12_container PKCS12_container::from_der(const std::vector<uint8_t>& der)
     if ( d2i_PKCS12_bio(bio.get(), &pRaw))
         throw ssl_exc("d2i_PKCS12_bio failed");
 
-    return PKCS12_container(pRaw);
+    return {pRaw};
 }

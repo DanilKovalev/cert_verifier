@@ -28,7 +28,7 @@ bio_istring::~bio_istring()
     }
 }
 
-size_t  bio_istring::getline(char *s, size_t nRead, char delim)
+size_t  bio_istring::get_line(char *s, size_t nRead, char delimiter)
 {
     size_t length = m_pStr->size() - m_offset;
 
@@ -37,7 +37,7 @@ size_t  bio_istring::getline(char *s, size_t nRead, char delim)
 
     for(size_t i = 0; i < length; i++)
     {
-        if ((*m_pStr)[m_offset + i] == delim)
+        if ((*m_pStr)[m_offset + i] == delimiter)
         {
             length = i + 1;
             break;
@@ -109,7 +109,7 @@ int bio_istring::s_gets( BIO* pBio, char* pBuf, int bufLen )
 {
     auto nRead = boost::numeric_cast<size_t>(bufLen);
     auto* pBio_str = static_cast<bio_istring*>(pBio->ptr);
-    return boost::numeric_cast<int>(pBio_str->getline(pBuf, nRead));
+    return boost::numeric_cast<int>(pBio_str->get_line(pBuf, nRead));
 }
 
 long bio_istring::s_ctrl( BIO* pBio, int cmd, long num, void *ptr )

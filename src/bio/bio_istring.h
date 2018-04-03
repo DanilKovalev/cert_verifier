@@ -7,7 +7,7 @@
 class bio_istring
 {
 public:
-    bio_istring(const std::string* pStr);
+    explicit bio_istring(const std::string* pStr);
     bio_istring(bio_istring&) = delete;
     bio_istring& operator =(const bio_istring&) = delete;
 
@@ -15,7 +15,7 @@ public:
 
     BIO* get_bio();
 
-    size_t  getline(char *s, size_t n, char delim = '\n');
+    size_t  get_line(char *s, size_t n, char delimiter = '\n');
     size_t read(char *s, size_t n);
 
     void destroy();
