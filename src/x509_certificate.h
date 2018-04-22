@@ -1,10 +1,11 @@
 #pragma once
 
+#include "x509_extension_list.h"
+
 #include <openssl/x509.h>
 
 #include <string>
 #include <vector>
-
 
 class x509_certificate
 {
@@ -21,10 +22,12 @@ public:
     std::string get_subject_name() const;
 
     X509* raw();
-    const X509* raw() const ;
+    const X509* raw() const;
 
     static x509_certificate from_pem(const std::string& pem);
     std::string to_pem() const;
+
+    x509_extension_list get_extensions();
 
     /*static x509_certificate from_der(const std::string& der);
     std::vector<std::uint8_t> to_der() const;*/
@@ -34,7 +37,7 @@ public:
 
 private:
     static X509* duplicate(X509 *pCert);
-    void free();
+    void free() noexcept;
 
     explicit x509_certificate(X509* pCert);
 

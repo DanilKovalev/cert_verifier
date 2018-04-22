@@ -27,7 +27,7 @@ x509_certificate& x509_certificate::operator =(x509_certificate&& rhs) noexcept
     return *this;
 }
 
-x509_certificate::~x509_certificate()
+x509_certificate::~x509_certificate() noexcept
 {
     free();
 }
@@ -82,7 +82,7 @@ X509* x509_certificate::duplicate(X509 *pCert)
     return result;
 }
 
-void x509_certificate::free()
+void x509_certificate::free() noexcept
 {
     if(m_pCert)
         X509_free(m_pCert);
@@ -152,4 +152,9 @@ x509_certificate x509_certificate::create_wrapper(X509* pCert)
 x509_certificate x509_certificate::create_attached(X509* pCert)
 {
     return x509_certificate(pCert);
+}
+
+x509_extension_list x509_certificate::get_extensions()
+{
+    return x509_extension_list(m_pCert->cert_info->extensions, false);
 }

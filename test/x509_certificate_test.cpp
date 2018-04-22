@@ -10,6 +10,12 @@ TEST_CASE( "Cert read", "[cert]" )
     SECTION("cert")
         path += "cert.pem";
 
+    SECTION("telegramorg")
+        path += "telegramorg.crt";
+
+    SECTION("toxchat.crt")
+        path += "toxchat.crt";
+
     std::ifstream file(path);
     if (!file.is_open())
         std::__throw_system_error(errno);
