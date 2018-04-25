@@ -6,6 +6,7 @@
 #include "x509_extension_iterator.h"
 #include "x509_extension_list.h"
 #include "extensions/authority_information_access.h"
+#include "extensions/crl_distribution_points.h"
 #include <openssl/x509v3.h>
 
 TEST_CASE( "extension print", "[cert][extension]" )
@@ -61,4 +62,19 @@ TEST_CASE( "authority_information_access", "[cert][extension]" )
 
     REQUIRE(auth.oscp() == oscp);
     REQUIRE(auth.ca_issuer() == issuer);
+
+
+    {
+        auto it = std::find_if(extensions.begin(), extensions.end(),
+                               [](const x509_extension& ext) -> bool{
+                                   return ext.nid() == NID_crl_distribution_points;
+                               });
+
+        REQUIRE(it != extensions.end());
+
+        x509_extension extension = *it;
+        crl_distribution_points point(extension);
+
+
+    }
 }
