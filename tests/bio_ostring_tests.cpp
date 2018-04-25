@@ -2,10 +2,10 @@
 #include <bio/bio_ostring.h>
 #include <boost/numeric/conversion/cast.hpp>
 
-TEST_CASE( "bio ostring test", "[bio]" )
+TEST_CASE( "bio ostring tests", "[bio]" )
 {
     bio_ostring bio;
-    std::string test_str = "test";
+    std::string test_str = "tests";
 
     BIO_write(bio.get_bio(), test_str.c_str(), boost::numeric_cast<int>( test_str.size() ));
 

@@ -7,10 +7,18 @@
 
 crl_distribution_points::crl_distribution_points(x509_extension &ext)
  : x509_extension(ext.raw(), false)
+ , m_points(nullptr)
 {
     m_points = static_cast<CRL_DIST_POINTS*>(X509V3_EXT_d2i( raw() ));
     if (!m_points)
         throw ssl_exc("X509V3_EXT_d2i for CRL_DIST_POINTS");
+}
+
+crl_distribution_points::crl_distribution_points(crl_distribution_points &&rhs) noexcept
+: x509_extension(std::move(rhs))
+, m_points(std::exchange(rhs.m_points, nullptr))
+{
+
 }
 
 int crl_distribution_points::size() const noexcept

@@ -1,6 +1,5 @@
 #include <catch.hpp>
-#include <fstream>
-#include <iostream>
+#include "utils.h"
 
 #include "x509_certificate.h"
 
@@ -16,11 +15,7 @@ TEST_CASE( "Cert read", "[cert]" )
     SECTION("toxchat.crt")
         path += "toxchat.crt";
 
-    std::ifstream file(path);
-    if (!file.is_open())
-        std::__throw_system_error(errno);
-
-    std::string pem((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    std::string pem = read_file(path);
     REQUIRE_NOTHROW(x509_certificate::from_pem(pem));
 }
 
