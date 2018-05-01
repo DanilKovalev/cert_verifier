@@ -1,5 +1,6 @@
 #include "dist_point.h"
 #include "../ssl_exc.h"
+#include "../utils/general_name.h"
 
 #include <openssl/x509v3.h>
 #include <boost/numeric/conversion/cast.hpp>
@@ -30,13 +31,7 @@ std::vector<std::string> dist_point::get_distribution_point_names()
     for(int i=0; i < sk_GENERAL_NAME_num(names); ++i)
     {
         GENERAL_NAME* name = sk_GENERAL_NAME_value(names, i);
-        if (name->type != GEN_URI)
-            throw ssl_exc("type != GEN_URI");
-
-        unsigned char* symbols = ASN1_STRING_data(name->d.uniformResourceIdentifier);
-        int length = ASN1_STRING_length(name->d.uniformResourceIdentifier);
-        std::string uri(reinterpret_cast<char*>(symbols), boost::numeric_cast<size_t >(length));
-        result.push_back(uri);
+        result.push_back(to_string(name));
     }
 
     return result;
@@ -51,13 +46,7 @@ std::vector<std::string> dist_point::get_crl_issuers()
     for(int i = 0; i < sk_GENERAL_NAME_num(m_point->CRLissuer); ++i)
     {
         GENERAL_NAME* name = sk_GENERAL_NAME_value(m_point->CRLissuer, i);
-        if (name->type != GEN_URI)
-            throw ssl_exc("type != GEN_URI");
-
-        unsigned char* symbols = ASN1_STRING_data(name->d.uniformResourceIdentifier);
-        int length = ASN1_STRING_length(name->d.uniformResourceIdentifier);
-        std::string uri(reinterpret_cast<char*>(symbols), boost::numeric_cast<size_t >(length));
-        result.push_back(uri);
+        result.push_back(to_string(name));
     }
 
     return result;

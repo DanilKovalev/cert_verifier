@@ -1,6 +1,7 @@
 #include "authority_information_access.h"
 
 #include "../ssl_exc.h"
+#include "../utils/general_name.h"
 #include "../bio/bio_ostring.h"
 
 #include <boost/numeric/conversion/cast.hpp>
@@ -24,10 +25,7 @@ void authority_information_access::parse()
         if (desc->location->type != GEN_URI)
             throw ssl_exc("location->type != GEN_URI");
 
-        //        ASN1_STRING_to_UTF8()
-        unsigned char* symbols = ASN1_STRING_data(desc->location->d.uniformResourceIdentifier);
-        int length = ASN1_STRING_length(desc->location->d.uniformResourceIdentifier);
-        std::string uri(reinterpret_cast<char*>(symbols), boost::numeric_cast<size_t >(length));
+        std::string uri = to_string(desc->location);
 
         int nid = OBJ_obj2nid(desc->method);
         if (nid == NID_ad_OCSP)
