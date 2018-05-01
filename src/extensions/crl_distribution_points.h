@@ -14,6 +14,7 @@ public:
     crl_distribution_points& operator=(const crl_distribution_points& ) = delete;
     crl_distribution_points(crl_distribution_points&& ) noexcept;
 
+    ~crl_distribution_points();
 
     int size() const noexcept;
     dist_point operator[](int);
