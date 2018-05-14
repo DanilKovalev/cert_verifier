@@ -39,3 +39,13 @@ dist_point crl_distribution_points::operator[](int idx)
     DIST_POINT* point = sk_DIST_POINT_value(m_points, idx);
     return dist_point(point);
 }
+
+bool operator==(const crl_distribution_points &lhs, const crl_distribution_points &rhs) noexcept
+{
+    return lhs.m_points == rhs.m_points;
+}
+
+bool crl_distribution_points::empty() const noexcept
+{
+    return static_cast<bool>(size());
+}
