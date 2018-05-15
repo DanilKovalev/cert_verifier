@@ -40,7 +40,7 @@ void authority_information_access::parse()
 
 const std::string &authority_information_access::oscp() const
 {
-    return  m_oscp;
+    return m_oscp;
 }
 
 const std::string &authority_information_access::ca_issuer() const
