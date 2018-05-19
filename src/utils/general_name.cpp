@@ -1,6 +1,6 @@
 #include "general_name.h"
 
-#include "../ssl_exc.h"
+#include "../SslException.h"
 
 #include <openssl/x509v3.h>
 
@@ -30,7 +30,7 @@ std::string to_string(GENERAL_NAME* name)
     unsigned char* out;
     int len = ASN1_STRING_to_UTF8(&out, name->d.uniformResourceIdentifier);
     if (len < 0)
-        throw ssl_exc("ASN1_STRING_to_UTF8");
+        throw SslException("ASN1_STRING_to_UTF8");
     std::unique_ptr<void , decltype(&CRYPTO_free)> ptr(static_cast<void*>(out), &CRYPTO_free);
 
     return std::string(reinterpret_cast<char *>(out), boost::numeric_cast<size_t >(len));

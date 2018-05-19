@@ -1,5 +1,5 @@
 #include "crl_distribution_points.h"
-#include "../ssl_exc.h"
+#include "../SslException.h"
 
 #include <boost/numeric/conversion/cast.hpp>
 #include <vector>
@@ -11,7 +11,7 @@ crl_distribution_points::crl_distribution_points(x509_extension &ext)
 {
     m_points = static_cast<CRL_DIST_POINTS*>(X509V3_EXT_d2i( raw() ));
     if (!m_points)
-        throw ssl_exc("X509V3_EXT_d2i for CRL_DIST_POINTS");
+        throw SslException("X509V3_EXT_d2i for CRL_DIST_POINTS");
 }
 
 crl_distribution_points::~crl_distribution_points()

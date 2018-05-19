@@ -1,6 +1,6 @@
 #include "authority_information_access.h"
 
-#include "../ssl_exc.h"
+#include "../SslException.h"
 #include "../utils/general_name.h"
 #include "../bio/bio_ostring.h"
 
@@ -23,7 +23,7 @@ void authority_information_access::parse()
     {
         ACCESS_DESCRIPTION *desc = sk_ACCESS_DESCRIPTION_value(access, i);
         if (desc->location->type != GEN_URI)
-            throw ssl_exc("location->type != GEN_URI");
+            throw SslException("location->type != GEN_URI");
 
         std::string uri = to_string(desc->location);
 

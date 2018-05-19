@@ -1,5 +1,5 @@
 #include "x509_extension.h"
-#include "ssl_exc.h"
+#include "SslException.h"
 #include <openssl/x509v3.h>
 #include <utility>
 #include <memory>
@@ -26,7 +26,7 @@ X509_EXTENSION *x509_extension::duplicate(X509_EXTENSION *pExt)
 {
     X509_EXTENSION* result = X509_EXTENSION_dup(pExt);
     if(result == nullptr)
-        throw ssl_exc("Failed to duplicate X509 certificate");
+        throw SslException("Failed to duplicate X509 certificate");
 
     return result;
 }

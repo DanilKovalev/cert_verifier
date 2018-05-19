@@ -1,5 +1,5 @@
 #include "dist_point.h"
-#include "../ssl_exc.h"
+#include "../SslException.h"
 #include "../utils/general_name.h"
 
 #include <openssl/x509v3.h>
