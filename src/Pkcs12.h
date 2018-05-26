@@ -1,21 +1,34 @@
 #pragma once
 
+#include "x509_certificate.h"
+
 #include <openssl/pkcs12.h>
+
+#include <string>
 #include <vector>
-#include <cstdint>
 
 class Pkcs12
 {
 public:
+    Pkcs12(PKCS12* pkcs12, bool acquire);
+    Pkcs12(const Pkcs12& rhs) = delete;
+    Pkcs12(Pkcs12&& rhs) noexcept;
+    Pkcs12& operator= (const Pkcs12& rhs) = delete;
+    Pkcs12& operator= (Pkcs12&& rhs) noexcept;
 
-    static Pkcs12 from_der(const uint8_t *bytes, size_t size);
+    ~Pkcs12();
+
+    friend void swap(Pkcs12& a, Pkcs12& b) noexcept;
+
+    x509_certificate parse(const std::string& pass, std::vector<x509_certificate> ca);
+    static Pkcs12 fromDer(const uint8_t *bytes, size_t size);
 
 private:
-    Pkcs12(PKCS12* pkcs12, bool acquire);
+    void free() noexcept;
 
 private:
     PKCS12* m_pkcs12;
     bool m_acquired;
 };
 
-
+void swap(Pkcs12& a, Pkcs12& b) noexcept;

@@ -5,18 +5,24 @@
 
 static std::string sslErr2str(ulong code);
 
-SslException::SslException(const std::string &text)
- : SslException()
+SslException::SslException(const std::string &text) noexcept
+: SslException()
 {
     m_errorMsg = text + " | Ssl error: " + m_errorMsg;
 }
 
-SslException::SslException()
+SslException::SslException() noexcept
  : m_code(ERR_get_error())
  , m_errorMsg(sslErr2str(m_code))
 {}
 
-SslException::SslException(ulong code)
+SslException::SslException(const SslException& other) noexcept
+: m_code(other.m_code)
+, m_errorMsg(other.m_errorMsg)
+{
+}
+
+SslException::SslException(ulong code) noexcept
  : m_code(code)
  , m_errorMsg(sslErr2str(m_code))
 {}
@@ -31,8 +37,21 @@ ulong SslException::getCode() const noexcept
     return m_code;
 }
 
-SslException::~SslException()
-{}
+
+
+SslException::SslException(SslException &&ex) noexcept
+: m_code(ex.m_code)
+, m_errorMsg(std::move(ex.m_errorMsg))
+{
+
+}
+
+int SslException::getReasonCode() const noexcept
+{
+    return ERR_GET_REASON(m_code);
+}
+
+SslException::~SslException() = default;
 
 std::string sslErr2str(ulong code)
 {

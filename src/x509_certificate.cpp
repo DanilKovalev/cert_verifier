@@ -7,23 +7,38 @@
 
 #include <openssl/pem.h>
 
-x509_certificate::x509_certificate(X509 *pCert)
+x509_certificate::x509_certificate(X509 *pCert, bool acquire)
 : m_pCert(pCert)
+, m_acquired(acquire)
 {}
 
 x509_certificate::x509_certificate(const x509_certificate& rhs)
 : m_pCert(duplicate(rhs.m_pCert))
+, m_acquired(true)
 {}
 
 x509_certificate::x509_certificate(x509_certificate&& rhs) noexcept
-: m_pCert(rhs.m_pCert)
-{
-    rhs.m_pCert = nullptr;
-}
+: m_pCert(std::exchange(rhs.m_pCert, nullptr))
+, m_acquired(std::exchange(rhs.m_acquired, false))
+{}
 
 x509_certificate& x509_certificate::operator =(x509_certificate&& rhs) noexcept
 {
-    this->m_pCert = std::exchange(rhs.m_pCert, nullptr);
+    if(this == &rhs)
+        return *this;
+
+    std::swap(*this, rhs);
+    rhs.free();
+    return *this;
+}
+
+x509_certificate& x509_certificate::operator =(const x509_certificate& rhs)
+{
+    if (this == &rhs)
+        return *this;
+
+    x509_certificate temp(rhs);
+    *this = std::move(temp);
     return *this;
 }
 
@@ -32,18 +47,7 @@ x509_certificate::~x509_certificate() noexcept
     free();
 }
 
-x509_certificate& x509_certificate::operator =(const x509_certificate& rhs)
-{
-    if (this == &rhs)
-        return *this;
-
-    X509* pCert = duplicate(rhs.m_pCert);
-    this->free();
-    this->m_pCert = pCert;
-    return *this;
-}
-
-std::vector<std::uint8_t> x509_certificate::digest(const EVP_MD* type) const
+std::vector<uint8_t> x509_certificate::digest(const EVP_MD* type) const
 {
     std::vector<std::uint8_t> fingerprint(static_cast<size_t >(EVP_MD_size(type)), 0);
     if(X509_digest(m_pCert, type, fingerprint.data(), nullptr) != 1)
@@ -84,10 +88,11 @@ X509* x509_certificate::duplicate(X509 *pCert)
 
 void x509_certificate::free() noexcept
 {
-    if(m_pCert)
+    if(m_pCert && m_acquired)
         X509_free(m_pCert);
 
     m_pCert = nullptr;
+    m_acquired = false;
 }
 
 X509 *x509_certificate::raw()
@@ -108,7 +113,7 @@ x509_certificate x509_certificate::from_pem(const std::string &pem)
     if( !PEM_read_bio_X509(bio.get_bio(), &pCert, nullptr, nullptr) )
         throw SslException("Failed to read X509 certificate");
 
-    return x509_certificate(pCert);
+    return x509_certificate(pCert, true);
 }
 
 
@@ -121,40 +126,13 @@ std::string x509_certificate::to_pem() const
     return bio.detach_string();
 }
 
-/*std::vector<std::uint8_t> x509_certificate::to_der() const
-{
-    std::uint8_t* buffer = nullptr;
-    ssize_t len = i2d_X509(m_pCert, &buffer);
-    if (len <= 0)
-        throw std::runtime_error("i2d_X509");
-
-    std::vector<std::uint8_t> vector(buffer, buffer + len);
-    ::free(buffer);
-    return vector;
-}
-
-x509_certificate x509_certificate::from_der(const std::string &der)
-{
-    const uint8_t* rawData = reinterpret_cast<const uint8_t *>(der.c_str());
-    X509* pCert;
-    long len = static_cast<long>(der.length());
-    if ( d2i_X509(&pCert, &rawData, len ) )
-        throw std::runtime_error("d2i_X509 failed");
-
-    return x509_certificate(pCert);
-}*/
-
-x509_certificate x509_certificate::create_wrapper(X509* pCert)
-{
-    return x509_certificate(duplicate(pCert));
-}
-
-x509_certificate x509_certificate::create_attached(X509* pCert)
-{
-    return x509_certificate(pCert);
-}
-
 x509_extension_list x509_certificate::get_extensions()
 {
     return x509_extension_list(m_pCert->cert_info->extensions, false);
+}
+
+void swap(x509_certificate& a, x509_certificate& b) noexcept
+{
+    std::swap(a.m_pCert, b.m_pCert);
+    std::swap(a.m_acquired, b.m_acquired);
 }

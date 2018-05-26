@@ -3,6 +3,7 @@
 #include <openssl/x509v3.h>
 #include <utility>
 #include <memory>
+#include <openssl/pkcs12.h>
 
 x509_extension::x509_extension(X509_EXTENSION *ext, bool acquire)
 : m_ext(ext)
@@ -96,5 +97,6 @@ x509_extension x509_extension::create_attached(X509_EXTENSION *ext)
 void swap(x509_extension& a, x509_extension& b) noexcept
 {
     std::swap(a.m_ext, b.m_ext);
-    std::swap(a.m_ext, b.m_ext);
+    std::swap(a.m_acquired, b.m_acquired);
 }
+
