@@ -15,7 +15,7 @@ public:
 
     BIO* get_bio();
 
-    size_t  get_line(char *s, size_t n, char delimiter = '\n');
+    size_t get_line(char *s, size_t n, char delimiter = '\n');
     size_t read(char *s, size_t n);
 
     void destroy();

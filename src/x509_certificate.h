@@ -10,7 +10,7 @@
 class x509_certificate
 {
 public:
-    explicit x509_certificate(X509* pCert, bool acquire);
+    x509_certificate(X509* pCert, bool acquire) noexcept;
     x509_certificate(const x509_certificate& rhs);
     x509_certificate(x509_certificate&& rhs) noexcept;
 

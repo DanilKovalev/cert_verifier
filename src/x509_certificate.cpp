@@ -7,7 +7,7 @@
 
 #include <openssl/pem.h>
 
-x509_certificate::x509_certificate(X509 *pCert, bool acquire)
+x509_certificate::x509_certificate(X509 *pCert, bool acquire) noexcept
 : m_pCert(pCert)
 , m_acquired(acquire)
 {}
