@@ -22,7 +22,7 @@ public:
     void verify(x509_certificate& cert) noexcept;
     void setStore(X509Store&& store);
 
-    friend void swap(X509StoreCtx& a, X509StoreCtx& b) noexcept;
+    void swap(X509StoreCtx& other) noexcept;
 
 private:
     void free() noexcept;
@@ -32,5 +32,12 @@ private:
     X509Store m_store;
 };
 
-void swap(X509StoreCtx& a, X509StoreCtx& b) noexcept;
+namespace std
+{
+    template <>
+    inline void swap(X509StoreCtx& a, X509StoreCtx& b) noexcept
+    {
+        a.swap(b);
+    }
+}
 

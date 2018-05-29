@@ -22,11 +22,9 @@ X509StoreCtx::X509StoreCtx(X509StoreCtx&& ctx) noexcept
 X509StoreCtx& X509StoreCtx::operator=(X509StoreCtx&& other) noexcept
 {
     if (this == &other)
-    {
         return *this;
-    }
 
-    std::swap(*this, other);
+    swap(other);
     return *this;
 }
 
@@ -55,9 +53,9 @@ const X509_STORE_CTX *X509StoreCtx::raw() const
     return m_ctx;
 }
 
-void swap(X509StoreCtx& a, X509StoreCtx& b) noexcept
+void X509StoreCtx::swap(X509StoreCtx& other) noexcept
 {
-    std::swap(a.m_ctx, b.m_ctx);
+    std::swap(m_ctx, other.m_ctx);
 }
 
 void X509StoreCtx::setStore(X509Store&& store)
