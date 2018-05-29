@@ -65,5 +65,6 @@ void X509StoreCtx::setStore(X509Store&& store)
 
 void X509StoreCtx::verify(x509_certificate& cert) noexcept
 {
-    X509_STORE_CTX_set_cert(m_ctx, cert.raw());
+    (void)cert;
+    //X509_STORE_CTX_set_cert(m_ctx, cert.raw());
 }
