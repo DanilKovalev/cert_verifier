@@ -19,7 +19,7 @@ public:
     x509_certificate& operator =(const x509_certificate& rhs);
     x509_certificate& operator =(x509_certificate&& rhs) noexcept;
 
-    friend void swap(x509_certificate& a, x509_certificate& b) noexcept;
+    void swap(x509_certificate& other) noexcept;
 
     std::vector<uint8_t> digest(const EVP_MD* type) const;
     std::string get_issuer_name() const;
@@ -37,10 +37,18 @@ private:
     static X509* duplicate(X509 *pCert);
     void free() noexcept;
 
-
 private:
     X509* m_pCert;
     bool m_acquired;
 };
 
-void swap(x509_certificate& a, x509_certificate& b) noexcept;
+namespace std
+{
+    template <>
+    inline void swap(x509_certificate& a, x509_certificate& b) noexcept
+    {
+        a.swap(b);
+    }
+
+}
+

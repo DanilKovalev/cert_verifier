@@ -27,7 +27,7 @@ x509_certificate& x509_certificate::operator =(x509_certificate&& rhs) noexcept
     if(this == &rhs)
         return *this;
 
-    std::swap(*this, rhs);
+    this->swap(rhs);
     rhs.free();
     return *this;
 }
@@ -131,8 +131,9 @@ x509_extension_list x509_certificate::get_extensions()
     return x509_extension_list(m_pCert->cert_info->extensions, false);
 }
 
-void swap(x509_certificate& a, x509_certificate& b) noexcept
+void x509_certificate::swap(x509_certificate& other) noexcept
 {
-    std::swap(a.m_pCert, b.m_pCert);
-    std::swap(a.m_acquired, b.m_acquired);
+    std::swap(m_pCert, other.m_pCert);
+    std::swap(m_acquired, other.m_acquired);
 }
+
