@@ -1,4 +1,4 @@
-#include "authority_information_access.h"
+#include "AuthorityInformationAccess.h"
 
 #include "../../SslException.h"
 #include "../../utils/general_name.h"
@@ -8,15 +8,15 @@
 #include <openssl/x509v3.h>
 
 
-authority_information_access::authority_information_access(x509_extension &ext)
- : x509_extension(ext.raw(), false)
+AuthorityInformationAccess::AuthorityInformationAccess(X509Extension &ext)
+ : X509Extension(ext.raw(), false)
  , m_oscp()
- , m_ca_issuers()
+ , m_caIssuer()
 {
     parse();
 }
 
-void authority_information_access::parse()
+void AuthorityInformationAccess::parse()
 {
     auto access = static_cast<AUTHORITY_INFO_ACCESS*>(::X509V3_EXT_d2i(raw()));
     for (int i = 0; i < sk_ACCESS_DESCRIPTION_num(access); ++i)
@@ -31,20 +31,20 @@ void authority_information_access::parse()
         if (nid == NID_ad_OCSP)
             m_oscp = uri;
         else if(nid == NID_ad_ca_issuers)
-            m_ca_issuers = uri;
+            m_caIssuer = uri;
         else
-            throw std::runtime_error("Unknown method in authority_information_access");
+            throw std::runtime_error("Unknown method in AuthorityInformationAccess");
     }
     ::AUTHORITY_INFO_ACCESS_free(access);
 }
 
-const std::string &authority_information_access::oscp() const
+const std::string &AuthorityInformationAccess::oscp() const
 {
     return m_oscp;
 }
 
-const std::string &authority_information_access::ca_issuer() const
+const std::string &AuthorityInformationAccess::ca_issuer() const
 {
-    return m_ca_issuers;
+    return m_caIssuer;
 }
 

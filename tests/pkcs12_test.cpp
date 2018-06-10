@@ -16,7 +16,7 @@ TEST_CASE( "Pkcs12 read", "[pkcs12]" )
     auto der = read_binary_file(path);
     Pkcs12 pkcs12 = Pkcs12::fromDer(der.data(), der.size());
 
-    std::vector<x509_certificate> additional;
+    std::vector<X509Certificate> additional;
 
     REQUIRE_THROWS_AS(pkcs12.parse("test1", additional), SslException);
     REQUIRE_NOTHROW(pkcs12.parse("test", additional));

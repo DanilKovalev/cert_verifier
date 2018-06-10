@@ -5,14 +5,14 @@
 #include <memory>
 
 
-class instance
+class Instance
 {
 public:
-    ~instance();
+    ~Instance();
 
-    static instance& get();
+    static Instance& get();
 private:
-    instance();
+    Instance();
 
     void lock(bool lock, int lock_id);
     static void callback(int mode, int n, const char *file, int line);

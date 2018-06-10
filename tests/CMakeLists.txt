@@ -5,7 +5,7 @@ file(GLOB_RECURSE SOURCE_FILES
         "*.cpp"
         "*.h")
 
-add_executable(${TEST_TARGET} ${SOURCE_FILES})
+add_executable(${TEST_TARGET} ${SOURCE_FILES} X509StoreCtx_test.cpp)
 target_link_libraries(${TEST_TARGET} my_ssl)
 
 set_target_properties(${TEST_TARGET} PROPERTIES

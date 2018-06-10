@@ -1,4 +1,4 @@
-#include "instance.h"
+#include "Instance.h"
 
 #include "openssl/crypto.h"
 #include "openssl/ssl.h"
@@ -6,13 +6,13 @@
 #include "openssl/rand.h"
 
 
-instance &instance::get()
+Instance &Instance::get()
 {
-    static instance inst;
+    static Instance inst;
     return inst;
 }
 
-instance::instance()
+Instance::Instance()
 : m_locks()
 {
     SSL_load_error_strings ();
@@ -21,11 +21,11 @@ instance::instance()
     ERR_load_crypto_strings();
     RAND_status();
 
-    if (CRYPTO_get_locking_callback() == NULL)
-        CRYPTO_set_locking_callback(instance::callback);
+    if (CRYPTO_get_locking_callback() == nullptr)
+        CRYPTO_set_locking_callback(Instance::callback);
 }
 
-instance::~instance()
+Instance::~Instance()
 {
     ERR_free_strings ();
     RAND_cleanup ();
@@ -35,14 +35,14 @@ instance::~instance()
     SSL_COMP_free_compression_methods();
 }
 
-void instance::callback(int mode, int n, const char *file, int line)
+void Instance::callback(int mode, int n, const char *file, int line)
 {
     (void) file;
     (void) line;
     get().lock(static_cast<bool>( mode & CRYPTO_LOCK), n);
 }
 
-void instance::lock(bool lock, int lock_id)
+void Instance::lock(bool lock, int lock_id)
 {
     if (m_locks.count(lock_id))
         m_locks[lock_id] = std::make_unique<std::mutex>();

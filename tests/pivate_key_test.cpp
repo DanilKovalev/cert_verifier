@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include "utils.h"
 
-#include "private_key.h"
+#include "PrivateKey.h"
 
 TEST_CASE( "Private key read", "[priv_key]" )
 {
@@ -10,6 +10,6 @@ TEST_CASE( "Private key read", "[priv_key]" )
         path += "key.pem";
 
     std::string pem = read_file(path);
-    REQUIRE_NOTHROW(private_key::from_pem(pem));
+    REQUIRE_NOTHROW(PrivateKey::from_pem(pem));
 }
 

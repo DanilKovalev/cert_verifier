@@ -63,7 +63,7 @@ void X509StoreCtx::setStore(X509Store&& store)
     m_store = std::move(store);
 }
 
-void X509StoreCtx::verify(x509_certificate& cert)
+void X509StoreCtx::verify(X509Certificate& cert)
 {
     if (X509_STORE_CTX_init(m_ctx, m_store.raw(), cert.raw(), nullptr) != 1)
         throw SslException("X509_STORE_CTX_init");
@@ -75,7 +75,7 @@ void X509StoreCtx::verify(x509_certificate& cert)
     }
 }
 
-void X509StoreCtx::setCert(x509_certificate& cert) noexcept
+void X509StoreCtx::setCert(X509Certificate& cert) noexcept
 {
     X509_STORE_CTX_set_cert(m_ctx, cert.raw() );
 }

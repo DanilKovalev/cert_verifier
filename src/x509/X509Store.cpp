@@ -11,13 +11,13 @@ X509Store::X509Store()
 }
 
 X509Store::X509Store(X509_STORE *store, bool acquire) noexcept
-: m_store(store)
-, m_acquired(acquire)
+ : m_store(store)
+ , m_acquired(acquire)
 {}
 
-X509Store::X509Store(X509Store &&other)
-        : m_store(std::exchange(other.m_store, nullptr))
-        , m_acquired(std::exchange(other.m_acquired, false))
+X509Store::X509Store(X509Store &&other) noexcept
+ : m_store(std::exchange(other.m_store, nullptr))
+ , m_acquired(std::exchange(other.m_acquired, false))
 {}
 
 X509Store::~X509Store()

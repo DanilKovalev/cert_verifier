@@ -30,7 +30,7 @@ private:
     static int  s_destroy( BIO* pBio );
 
 private:
-    BIO* m_pBio = nullptr;
+    BIO* bio = nullptr;
     const std::string* m_pStr = nullptr;
     size_t m_offset = 0;
 };

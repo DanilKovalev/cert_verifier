@@ -63,7 +63,7 @@ void swap(Pkcs12& a, Pkcs12& b) noexcept
     std::swap(a.m_acquired, b.m_acquired);
 }
 
-x509_certificate Pkcs12::parse(const std::string &pass, std::vector<x509_certificate> ca)
+X509Certificate Pkcs12::parse(const std::string &pass, std::vector<X509Certificate> ca)
 {
     (void) ca;
 
@@ -73,7 +73,7 @@ x509_certificate Pkcs12::parse(const std::string &pass, std::vector<x509_certifi
         throw SslException("PKCS12_parse");
 
     EVP_PKEY_free(pkey);
-    return x509_certificate(pCert, true);
+    return X509Certificate(pCert, true);
 }
 
 

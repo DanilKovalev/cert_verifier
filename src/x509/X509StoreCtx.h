@@ -1,7 +1,7 @@
 #pragma once
 
 #include "X509Store.h"
-#include "x509_certificate.h"
+#include "X509Certificate.h"
 
 #include <openssl/x509_vfy.h>
 
@@ -19,7 +19,7 @@ public:
     X509_STORE_CTX* raw();
     const X509_STORE_CTX* raw() const;
 
-    void verify(x509_certificate& cert);
+    void verify(X509Certificate& cert);
     void setStore(X509Store&& store);
 
 
@@ -27,7 +27,7 @@ public:
 
 private:
     void free() noexcept;
-    void setCert(x509_certificate& cert) noexcept;
+    void setCert(X509Certificate& cert) noexcept;
 private:
     X509_STORE_CTX* m_ctx;
     X509Store m_store;

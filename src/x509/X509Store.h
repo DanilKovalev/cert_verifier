@@ -10,7 +10,7 @@ public:
     X509Store();
     X509Store(X509_STORE* store, bool acquire) noexcept;
     X509Store(const X509Store& other) = delete;
-    X509Store(X509Store&& other);
+    X509Store(X509Store&& other) noexcept;
     X509Store& operator =(X509Store&& other) noexcept;
     X509Store& operator =(const X509Store& other) = delete;
 

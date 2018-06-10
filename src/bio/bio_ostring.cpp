@@ -5,13 +5,13 @@
 #include <cstring>
 
 bio_ostring::bio_ostring()
- : m_pBio(init_bio())
+ : m_bio(init_bio())
  , m_str()
 {}
 
 bio_ostring::~bio_ostring()
 {
-    if(!m_pBio)
+    if(!m_bio)
         return;
 
     try
@@ -26,7 +26,7 @@ bio_ostring::~bio_ostring()
 
 BIO* bio_ostring::get_bio()
 {
-    return m_pBio;
+    return m_bio;
 }
 
 
@@ -42,10 +42,10 @@ std::string bio_ostring::detach_string()
 
 void bio_ostring::destroy()
 {
-    if ( BIO_free(m_pBio) != 1)
+    if ( BIO_free(m_bio) != 1)
         std::__throw_runtime_error("Failed to BIO_free");
 
-    m_pBio = nullptr;
+    m_bio = nullptr;
 }
 
 BIO* bio_ostring::init_bio()

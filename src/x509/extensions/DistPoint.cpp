@@ -1,4 +1,4 @@
-#include "dist_point.h"
+#include "DistPoint.h"
 #include "../../SslException.h"
 #include "../../utils/general_name.h"
 
@@ -7,21 +7,19 @@
 #include <vector>
 
 
-dist_point::dist_point(DIST_POINT *point)
+DistPoint::DistPoint(DIST_POINT *point)
 : m_point(point)
 {
 }
 
-dist_point::dist_point(dist_point && rhs)
+DistPoint::DistPoint(DistPoint && rhs) noexcept
 : m_point(std::exchange(rhs.m_point, nullptr))
 {
 }
 
-dist_point::~dist_point()
-{
-}
+DistPoint::~DistPoint() = default;
 
-std::vector<std::string> dist_point::get_distribution_point_names()
+std::vector<std::string> DistPoint::get_distribution_point_names()
 {
     std::vector<std::string> result;
     if(m_point->distpoint == nullptr || m_point->distpoint->type != 0)
@@ -37,7 +35,7 @@ std::vector<std::string> dist_point::get_distribution_point_names()
     return result;
 }
 
-std::vector<std::string> dist_point::get_crl_issuers()
+std::vector<std::string> DistPoint::get_crl_issuers()
 {
     std::vector<std::string> result;
     if(!m_point->CRLissuer)

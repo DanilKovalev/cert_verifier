@@ -7,7 +7,7 @@
 #include <cstring>
 
 bio_istring::bio_istring(const std::string *pStr)
- : m_pBio(init_bio())
+ : bio(init_bio())
  , m_pStr(pStr)
  , m_offset(0)
 {
@@ -15,7 +15,7 @@ bio_istring::bio_istring(const std::string *pStr)
 
 bio_istring::~bio_istring()
 {
-    if(!m_pBio)
+    if(!bio)
         return;
 
     try
@@ -63,15 +63,15 @@ size_t bio_istring::read(char *s, size_t nRead)
 
 BIO* bio_istring::get_bio()
 {
-    return m_pBio;
+    return bio;
 }
 
 void bio_istring::destroy()
 {
-    if ( BIO_free(m_pBio) != 1)
+    if ( BIO_free(bio) != 1)
         std::__throw_runtime_error("Failed to BIO_free");
 
-    m_pBio = nullptr;
+    bio = nullptr;
 }
 
 BIO* bio_istring::init_bio()

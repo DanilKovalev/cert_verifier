@@ -31,7 +31,7 @@ private:
     static int  s_destroy( BIO* pBio );
 
 private:
-    BIO* m_pBio;
+    BIO* m_bio;
     std::string m_str;
 };
 

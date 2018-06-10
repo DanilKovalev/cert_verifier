@@ -23,7 +23,7 @@ TEST_CASE( "x509StoreCtx test", "[storectx][x509]")
     std::string path = "content/cert.pem";
     std::string pem = read_file(path);
 
-    x509_certificate cert = x509_certificate::from_pem(pem);
+    X509Certificate cert = X509Certificate::from_pem(pem);
 
     storeCtx.setStore(std::move(store));
     CHECK_THROWS( storeCtx.verify(cert));

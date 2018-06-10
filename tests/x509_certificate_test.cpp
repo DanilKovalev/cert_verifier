@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include "utils.h"
 
-#include "x509/x509_certificate.h"
+#include "x509/X509Certificate.h"
 
 TEST_CASE( "Cert read", "[cert]" )
 {
@@ -16,7 +16,7 @@ TEST_CASE( "Cert read", "[cert]" )
         path += "toxchat.crt";
 
     std::string pem = read_file(path);
-    REQUIRE_NOTHROW(x509_certificate::from_pem(pem));
+    REQUIRE_NOTHROW(X509Certificate::from_pem(pem));
 }
 
 TEST_CASE("Cert memory test", "[store][x509]")
@@ -24,10 +24,10 @@ TEST_CASE("Cert memory test", "[store][x509]")
     std::string path = "content/cert.pem";
     std::string pem = read_file(path);
 
-    x509_certificate cert1 = x509_certificate::from_pem(pem);
-    x509_certificate cert2(cert1);
+    X509Certificate cert1 = X509Certificate::from_pem(pem);
+    X509Certificate cert2(cert1);
 
     std::swap(cert2, cert1);
     cert1 = std::move(cert2);
-    x509_certificate cert3(std::move(cert1));
+    X509Certificate cert3(std::move(cert1));
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "x509/x509_certificate.h"
+#include "x509/X509Certificate.h"
 
 #include <openssl/pkcs12.h>
 
@@ -20,7 +20,7 @@ public:
 
     friend void swap(Pkcs12& a, Pkcs12& b) noexcept;
 
-    x509_certificate parse(const std::string& pass, std::vector<x509_certificate> ca);
+    X509Certificate parse(const std::string& pass, std::vector<X509Certificate> ca);
     static Pkcs12 fromDer(const uint8_t *bytes, size_t size);
 
 private:
