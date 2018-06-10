@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include "utils.h"
 
-#include "x509_certificate.h"
+#include "x509/x509_certificate.h"
 
 TEST_CASE( "Cert read", "[cert]" )
 {

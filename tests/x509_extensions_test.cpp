@@ -1,11 +1,11 @@
 #include <catch.hpp>
 #include "utils.h"
 
-#include "x509_certificate.h"
-#include "x509_extension_iterator.h"
-#include "x509_extension_list.h"
-#include "extensions/authority_information_access.h"
-#include "extensions/crl_distribution_points.h"
+#include "x509/x509_certificate.h"
+#include "x509/extensions/x509_extension_iterator.h"
+#include "x509/extensions/x509_extension_list.h"
+#include "x509/extensions/authority_information_access.h"
+#include "x509/extensions/crl_distribution_points.h"
 #include <openssl/x509v3.h>
 #include <iostream>
 

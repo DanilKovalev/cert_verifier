@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../x509_extension.h"
+#include "x509_extension.h"
 #include "dist_point.h"
 #include <openssl/x509v3.h>
 

@@ -1,6 +1,6 @@
 #include "dist_point.h"
-#include "../SslException.h"
-#include "../utils/general_name.h"
+#include "../../SslException.h"
+#include "../../utils/general_name.h"
 
 #include <openssl/x509v3.h>
 #include <boost/numeric/conversion/cast.hpp>

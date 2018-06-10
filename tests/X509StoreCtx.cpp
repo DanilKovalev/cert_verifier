@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include "utils.h"
 
-#include "X509StoreCtx.h"
+#include "x509/X509StoreCtx.h"
 #include "SslException.h"
 
 TEST_CASE( "x509StoreCtx memory test", "[storectx][x509]")
@@ -26,5 +26,5 @@ TEST_CASE( "x509StoreCtx test", "[storectx][x509]")
     x509_certificate cert = x509_certificate::from_pem(pem);
 
     storeCtx.setStore(std::move(store));
-    storeCtx.verify(cert);
+    CHECK_THROWS( storeCtx.verify(cert));
 }

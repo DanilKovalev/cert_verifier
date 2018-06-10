@@ -1,5 +1,5 @@
 #include "crl_distribution_points.h"
-#include "../SslException.h"
+#include "../../SslException.h"
 
 #include <boost/numeric/conversion/cast.hpp>
 #include <vector>

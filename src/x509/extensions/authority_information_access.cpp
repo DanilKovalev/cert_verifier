@@ -1,8 +1,8 @@
 #include "authority_information_access.h"
 
-#include "../SslException.h"
-#include "../utils/general_name.h"
-#include "../bio/bio_ostring.h"
+#include "../../SslException.h"
+#include "../../utils/general_name.h"
+#include "../../bio/bio_ostring.h"
 
 #include <boost/numeric/conversion/cast.hpp>
 #include <openssl/x509v3.h>

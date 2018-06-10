@@ -1,9 +1,9 @@
 #include "x509_certificate.h"
 
-#include "bio/bio_istring.h"
-#include "bio/bio_ostring.h"
-#include "bio/bio_guard.h"
-#include "SslException.h"
+#include "../bio/bio_istring.h"
+#include "../bio/bio_ostring.h"
+#include "../bio/bio_guard.h"
+#include "../SslException.h"
 
 #include <openssl/pem.h>
 

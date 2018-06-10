@@ -1,5 +1,5 @@
 #include "X509StoreCtx.h"
-#include "SslException.h"
+#include "../SslException.h"
 
 #include <utility>
 

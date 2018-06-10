@@ -1,5 +1,5 @@
 #include "x509_extension.h"
-#include "SslException.h"
+#include "../../SslException.h"
 #include <openssl/x509v3.h>
 #include <utility>
 #include <memory>

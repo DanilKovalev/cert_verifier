@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include "utils.h"
 
-#include "X509Store.h"
+#include "x509/X509Store.h"
 #include "SslException.h"
 
 TEST_CASE( "x509Store test", "[store][x509]" )
