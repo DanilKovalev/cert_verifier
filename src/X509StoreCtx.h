@@ -19,14 +19,15 @@ public:
     X509_STORE_CTX* raw();
     const X509_STORE_CTX* raw() const;
 
-    void verify(x509_certificate& cert) noexcept;
+    void verify(x509_certificate& cert);
     void setStore(X509Store&& store);
+
 
     void swap(X509StoreCtx& other) noexcept;
 
 private:
     void free() noexcept;
-
+    void setCert(x509_certificate& cert) noexcept;
 private:
     X509_STORE_CTX* m_ctx;
     X509Store m_store;
