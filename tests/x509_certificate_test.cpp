@@ -15,6 +15,9 @@ TEST_CASE( "Cert read", "[cert]" )
     SECTION("toxchat.crt")
         path += "toxchat.crt";
 
+    SECTION("letsEncrypt.crt")
+        path += "LetsEncryptAuthorityX3.crt";
+
     std::string pem = read_file(path);
     REQUIRE_NOTHROW(X509Certificate::from_pem(pem));
 }

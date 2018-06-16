@@ -2,6 +2,8 @@
 
 #include "X509Store.h"
 #include "X509Certificate.h"
+#include "X509VerifyParam.h"
+#include "SslException.h"
 
 #include <openssl/x509_vfy.h>
 
@@ -10,7 +12,7 @@ class X509StoreCtx
 public:
     X509StoreCtx();
     X509StoreCtx(const X509StoreCtx& other) = delete;
-    X509StoreCtx(X509StoreCtx&& ctx) noexcept;
+    X509StoreCtx(X509StoreCtx&& other) noexcept;
 
     X509StoreCtx& operator=(const X509StoreCtx& other) = delete;
     X509StoreCtx& operator=(X509StoreCtx&& other) noexcept;
@@ -22,15 +24,18 @@ public:
     void verify(X509Certificate& cert);
     void setStore(X509Store&& store);
 
-
     void swap(X509StoreCtx& other) noexcept;
+
+    void setParametrs(X509VerifyParam&& param) noexcept;
 
 private:
     void free() noexcept;
-    void setCert(X509Certificate& cert) noexcept;
+    void setCertificate(X509Certificate &cert) noexcept;
+    void init();
 private:
-    X509_STORE_CTX* m_ctx;
+    X509_STORE_CTX* m_raw;
     X509Store m_store;
+    X509VerifyParam m_param;
 };
 
 namespace std

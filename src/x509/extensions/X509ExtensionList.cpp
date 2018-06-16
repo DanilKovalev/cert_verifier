@@ -18,6 +18,7 @@ X509Extension X509ExtensionList::operator[](size_t num) const
     return X509Extension::create_wrapper(ext);
 }
 
+
 X509ExtensionIterator X509ExtensionList::begin() noexcept
 {
     return X509ExtensionIterator(m_extList, 0);

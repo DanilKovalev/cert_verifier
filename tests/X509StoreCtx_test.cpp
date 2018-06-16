@@ -14,17 +14,20 @@ TEST_CASE( "x509StoreCtx memory test", "[storectx][x509]")
     X509StoreCtx store3(std::move(store));
 }
 
-
 TEST_CASE( "x509StoreCtx test", "[storectx][x509]")
 {
     X509Store store;
     store.loadDefaultLocation();
     X509StoreCtx storeCtx;
-    std::string path = "content/cert.pem";
+    std::string path = "content/LetsEncryptAuthorityX3.crt";
     std::string pem = read_file(path);
 
     X509Certificate cert = X509Certificate::from_pem(pem);
 
+    X509VerifyParam param;
+    param.setHost("aaa.com");
+    param.setDepth(1);
+    storeCtx.setParametrs(std::move(param));
     storeCtx.setStore(std::move(store));
     CHECK_THROWS( storeCtx.verify(cert));
 }

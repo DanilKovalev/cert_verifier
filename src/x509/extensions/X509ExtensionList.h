@@ -8,7 +8,7 @@ class X509ExtensionList
 {
 public:
     X509ExtensionList(X509_EXTENSIONS* ext_list, bool acquire);
-
+  
     size_t size() const noexcept;
     X509Extension operator[](size_t) const;
 
