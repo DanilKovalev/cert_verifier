@@ -1,6 +1,7 @@
 #pragma once
 
-#include "extensions/X509ExtensionList.h"
+#include "extensions/X509Extension.h"
+#include "utils/StackOf.h"
 
 #include <openssl/x509.h>
 
@@ -31,7 +32,7 @@ public:
     static X509Certificate from_pem(const std::string& pem);
     std::string to_pem() const;
 
-    X509ExtensionList get_extensions();
+    StackOf<X509Extension> get_extensions();
 
 private:
     static X509* duplicate(X509 *pCert);

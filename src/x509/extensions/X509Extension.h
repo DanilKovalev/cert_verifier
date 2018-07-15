@@ -5,6 +5,8 @@
 class X509Extension
 {
 public:
+    typedef X509_EXTENSION RawType;
+    
     X509Extension(X509_EXTENSION* ext, bool acquire);
 
     X509Extension(const X509Extension& rhs);

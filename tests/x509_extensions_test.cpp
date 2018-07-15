@@ -1,5 +1,6 @@
 #include <catch.hpp>
 #include "utils.h"
+#include "utils/StackOf.h"
 
 #include "x509/X509Certificate.h"
 #include "x509/extensions/X509ExtensionIterator.h"
@@ -24,16 +25,16 @@ TEST_CASE( "extension print", "[cert][extension]" )
     std::string pem = read_file(path);
     X509Certificate certificate = X509Certificate::from_pem(pem);
 
-    X509ExtensionList extensions = certificate.get_extensions();
-    for (const auto &p: extensions)
+    StackOf<X509Extension> extensions = certificate.get_extensions();
+    for(const auto& extension : extensions)
     {
+        
     }
-
-
 }
 
 TEST_CASE( "AuthorityInformationAccess", "[cert][extension]" )
 {
+    
     std::string path = "content/telegramorg.crt";
     std::string oscp = "http://ocsp.godaddy.com/";
     std::string issuer = "http://certificates.godaddy.com/repository/gdig2.crt";
@@ -41,24 +42,19 @@ TEST_CASE( "AuthorityInformationAccess", "[cert][extension]" )
     std::string pem = read_file(path);
     X509Certificate certificate = X509Certificate::from_pem(pem);
 
-    X509ExtensionList extensions = certificate.get_extensions();
-    auto it = std::find_if(extensions.begin(), extensions.end(),
+    StackOf<X509Extension> extensions = certificate.get_extensions();
+    auto it = std::find_if(extensions.cbegin(), extensions.cend(),
                  [](const X509Extension& ext) -> bool{
                      return ext.nid() == NID_info_access;
                  });
 
-    REQUIRE(it != extensions.end());
+    REQUIRE(it != extensions.cend());
 
     X509Extension extension = *it;
     AuthorityInformationAccess auth(extension);
 
     REQUIRE(auth.oscp() == oscp);
     REQUIRE(auth.ca_issuer() == issuer);
-
-
-    {
-
-    }
 }
 
 TEST_CASE( "CrlDistributionPoints", "[cert][extension][crl]" )
@@ -67,7 +63,7 @@ TEST_CASE( "CrlDistributionPoints", "[cert][extension][crl]" )
     std::string pem = read_file(path);
 
     X509Certificate certificate = X509Certificate::from_pem(pem);
-    X509ExtensionList extensions = certificate.get_extensions();
+    StackOf<X509Extension> extensions = certificate.get_extensions();
 
     auto it = std::find_if(extensions.begin(), extensions.end(),
                            [](const X509Extension& ext) -> bool{

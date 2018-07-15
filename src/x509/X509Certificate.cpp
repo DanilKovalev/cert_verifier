@@ -126,9 +126,9 @@ std::string X509Certificate::to_pem() const
     return bio.detach_string();
 }
 
-X509ExtensionList X509Certificate::get_extensions()
+StackOf<X509Extension> X509Certificate::get_extensions()
 {
-    return {m_cert->cert_info->extensions, false};
+    return StackOf<X509Extension>(reinterpret_cast<struct stack_st*>(m_cert->cert_info->extensions), false);
 }
 
 void X509Certificate::swap(X509Certificate& other) noexcept
