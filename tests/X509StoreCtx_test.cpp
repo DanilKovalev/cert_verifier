@@ -1,17 +1,14 @@
 #include <catch.hpp>
 #include "utils.h"
 
+#include "template_tests.h"
 #include "x509/X509StoreCtx.h"
 #include "SslException.h"
 
 TEST_CASE( "x509StoreCtx memory test", "[storectx][x509]")
 {
     X509StoreCtx store;
-    X509StoreCtx store2;
-
-    std::swap(store, store2);
-    store = std::move(store2);
-    X509StoreCtx store3(std::move(store));
+    REQUIRE_NOTHROW(move_test(store));
 }
 
 TEST_CASE( "x509StoreCtx test", "[storectx][x509]")
