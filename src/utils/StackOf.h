@@ -12,8 +12,16 @@ class StackOf
 public:
     typedef StackOf<Type> iterator;
     typedef StackOf<const Type> const_iterator;
-    
+    typedef Type value_type;
+    typedef Type& reference;
+    typedef const Type& const_reference;
+    typedef Type* pointer;
+    typedef const Type * const_pointer;
+
 public:
+    StackOf() : m_stack(createStack()) , m_acquired(true)
+    {};
+
     StackOf(struct stack_st* stack, bool acquire) : m_stack(stack), m_acquired(acquire){};
 
     StackOf(const StackOf& obj)
@@ -48,13 +56,23 @@ public:
     
     ~StackOf()
     {
-        if (!m_acquired)
+        if (!m_acquired || m_stack == nullptr)
             return;
 
         clear();
         sk_free(m_stack);
     };
-    
+
+    struct stack_st* raw() noexcept
+    {
+        return m_stack;
+    }
+
+    const struct stack_st* raw() const noexcept
+    {
+        return m_stack;
+    }
+
     const Type operator[](int i) const
     {
         return Type(toRawType(sk_value(m_stack, i)), false);
@@ -68,14 +86,14 @@ public:
     void push(Type& type)
     {
         if(m_acquired)
-            sk_push(m_stack, type.detach());
+            pushImpl(type.detach());
         else
-            sk_push(m_stack, type.raw());
+            pushImpl(type.raw());
     }
 
     void push(Type&& type)
     {
-        sk_push(m_stack, type.detach());
+        pushImpl(type.detach());
     }
 
     int size() const
@@ -93,7 +111,7 @@ public:
     {
         if(m_acquired)
             clearImpl();
-        
+
         sk_zero(m_stack);
     }
 
@@ -138,8 +156,21 @@ private:
     { 
         return static_cast<typename Type::RawType*>(pRaw);
     };
-    
-    
+
+    static struct stack_st* createStack()
+    {
+        struct stack_st* result = sk_new_null();
+        if (result)
+            return result;
+
+        throw SslException("sk_new_null");
+    }
+
+    void pushImpl(typename Type::RawType* pRaw)
+    {
+        if(sk_push(m_stack, pRaw) == nullptr)
+            throw SslException("sk_push");
+    }
 private:
     struct stack_st* m_stack;
     bool m_acquired;

@@ -25,12 +25,12 @@ X509VerifyParam::X509VerifyParam()
 }
 
 X509VerifyParam::X509VerifyParam(X509_VERIFY_PARAM* raw, bool acquire) noexcept
-        : m_raw(raw), m_acquired(acquire)
+ : m_raw(raw), m_acquired(acquire)
 {
 }
 
 X509VerifyParam::X509VerifyParam(X509VerifyParam&& other)
-        : m_raw(std::exchange(other.m_raw, nullptr)), m_acquired(std::exchange(other.m_acquired, false))
+ : m_raw(std::exchange(other.m_raw, nullptr)), m_acquired(std::exchange(other.m_acquired, false))
 {
 }
 
@@ -91,6 +91,5 @@ X509_VERIFY_PARAM* X509VerifyParam::detach()
 
     m_acquired = false;
     X509_VERIFY_PARAM* result = std::exchange(m_raw, nullptr);
-
     return result;
 }

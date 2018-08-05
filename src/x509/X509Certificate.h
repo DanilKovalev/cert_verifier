@@ -11,6 +11,8 @@
 class X509Certificate
 {
 public:
+    typedef X509 RawType;
+
     X509Certificate(X509* pCert, bool acquire) noexcept;
     X509Certificate(const X509Certificate& rhs);
     X509Certificate(X509Certificate&& rhs) noexcept;

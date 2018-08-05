@@ -4,6 +4,7 @@
 #include "X509Certificate.h"
 #include "X509VerifyParam.h"
 #include "SslException.h"
+#include "utils/StackOf.h"
 
 #include <openssl/x509_vfy.h>
 
@@ -27,6 +28,11 @@ public:
     void swap(X509StoreCtx& other) noexcept;
 
     void setParametrs(X509VerifyParam&& param) noexcept;
+    void setAdditionalCertificates(const StackOf<X509Certificate>& certsChain);
+    void setAdditionalCertificates(StackOf<X509Certificate>&& certsChain) noexcept;
+
+    StackOf<X509Certificate> getChain();
+    int getErrorDepth() const noexcept;
 
 private:
     void free() noexcept;
@@ -36,6 +42,7 @@ private:
     X509_STORE_CTX* m_raw;
     X509Store m_store;
     X509VerifyParam m_param;
+    StackOf<X509Certificate> m_additionalCerts;
 };
 
 namespace std
