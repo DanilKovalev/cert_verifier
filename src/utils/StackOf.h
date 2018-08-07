@@ -63,6 +63,14 @@ public:
         sk_free(m_stack);
     };
 
+    struct stack_st* detach() noexcept
+    {
+        struct stack_st* result = m_stack;
+        m_stack = nullptr;
+        m_acquired = false;
+        return result;
+    }
+
     struct stack_st* raw() noexcept
     {
         return m_stack;
@@ -83,17 +91,15 @@ public:
         return Type(toRawType(sk_value(m_stack, i)), false);
     }
 
-    void push(Type& type)
+    void push(Type& value)
     {
-        if(m_acquired)
-            pushImpl(type.detach());
-        else
-            pushImpl(type.raw());
+        Type newValue(value);
+        pushImpl(value.detach());
     }
 
-    void push(Type&& type)
+    void push(Type&& value)
     {
-        pushImpl(type.detach());
+        pushImpl(value.detach());
     }
 
     int size() const
@@ -176,4 +182,12 @@ private:
     bool m_acquired;
 };
 
+namespace std
+{
+    template <typename T>
+    inline void swap(StackOf<T>& a, StackOf<T>& b) noexcept
+    {
+        a.swap(b);
+    }
+}
 
