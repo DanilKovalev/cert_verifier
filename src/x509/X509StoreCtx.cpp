@@ -1,5 +1,4 @@
 #include "X509StoreCtx.h"
-#include "exceptions/SslVerifyException.h"
 
 #include <utility>
 
@@ -72,6 +71,20 @@ void X509StoreCtx::verify(X509Certificate& cert)
         throw SslVerifyException(X509_STORE_CTX_get_error(m_raw));
 }
 
+bool X509StoreCtx::verify(X509Certificate& cert, SslVerifyException& sslVerifyException)
+{
+    try
+    {
+        verify(cert);
+        return true;
+    }
+    catch (SslVerifyException& ex)
+    {
+        sslVerifyException = ex;
+        return false;
+    }
+}
+
 void X509StoreCtx::setCertificate(X509Certificate &cert) noexcept
 {
     X509_STORE_CTX_set_cert(m_raw, cert.raw() );
@@ -79,7 +92,7 @@ void X509StoreCtx::setCertificate(X509Certificate &cert) noexcept
 
 void X509StoreCtx::init()
 {
-    if (X509_STORE_CTX_init(m_raw, m_store.raw(), nullptr, nullptr) != 1)
+    if (X509_STORE_CTX_init(m_raw, m_store.raw(), nullptr, reinterpret_cast <stack_st_X509*>(m_additionalCerts.raw())) != 1)
         throw SslException("X509_STORE_CTX_init");
 }
 

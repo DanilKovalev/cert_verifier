@@ -2,7 +2,7 @@
 #include <bio/bio_istring.h>
 #include <boost/numeric/conversion/cast.hpp>
 
-TEST_CASE( "bio istring tests", "[bio]" )
+TEST_CASE( "bio istring tests", "[m_bio]" )
 {
     std::string test_str = "tests";
     bio_istring bio(&test_str);
@@ -22,7 +22,7 @@ TEST_CASE( "bio istring tests", "[bio]" )
     REQUIRE(BUFFER[0] == 'e');
 }
 
-TEST_CASE( "bio istring seek tests", "[bio]" )
+TEST_CASE( "m_bio istring seek tests", "[m_bio]" )
 {
     std::string test_str = "tests";
     bio_istring bio(&test_str);

@@ -6,9 +6,12 @@
 class SslVerifyException : public std::exception
 {
 public:
+    SslVerifyException() noexcept;
     explicit SslVerifyException(long error) noexcept;
     SslVerifyException(const SslVerifyException& other) noexcept;
     SslVerifyException(SslVerifyException&& ex ) noexcept;
+
+    SslVerifyException& operator=(const SslVerifyException& other) noexcept;
 
     ~SslVerifyException() override {};
 

@@ -2,7 +2,7 @@
 #include <bio/bio_ostring.h>
 #include <boost/numeric/conversion/cast.hpp>
 
-TEST_CASE( "bio ostring tests", "[bio]" )
+TEST_CASE( "bio ostring tests", "[m_bio]" )
 {
     bio_ostring bio;
     std::string test_str = "tests";

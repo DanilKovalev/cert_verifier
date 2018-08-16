@@ -73,6 +73,13 @@ const X509_EXTENSION *X509Extension::raw() const
     return m_ext;
 }
 
+X509_EXTENSION* X509Extension::detach() noexcept
+{
+    m_acquired = false;
+    return std::exchange(m_ext, nullptr);
+
+}
+
 bool X509Extension::is_critical() const noexcept
 {
     return static_cast<bool>(X509_EXTENSION_get_critical(m_ext));

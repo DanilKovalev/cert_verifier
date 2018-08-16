@@ -22,6 +22,7 @@ public:
 
 private:
     BIO* init_bio();
+    static BIO_METHOD* init_bio_method();
 
 private:
     static int  s_write( BIO* pBio, const char* pData, int dataLen );
@@ -31,6 +32,7 @@ private:
     static int  s_destroy( BIO* pBio );
 
 private:
+    BIO_METHOD* m_bioMethod;
     BIO* m_bio;
     std::string m_str;
 };

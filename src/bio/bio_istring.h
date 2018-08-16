@@ -17,10 +17,9 @@ public:
 
     size_t get_line(char *s, size_t n, char delimiter = '\n');
     size_t read(char *s, size_t n);
-
-    void destroy();
 private:
     BIO* init_bio();
+    static BIO_METHOD* init_bio_method();
 
 private:
     static int  s_read( BIO* pBio, char* pBuf, int bufLen );
@@ -30,7 +29,8 @@ private:
     static int  s_destroy( BIO* pBio );
 
 private:
-    BIO* bio = nullptr;
+    BIO_METHOD* m_bioMethod = nullptr;
+    BIO* m_bio = nullptr;
     const std::string* m_pStr = nullptr;
     size_t m_offset = 0;
 };

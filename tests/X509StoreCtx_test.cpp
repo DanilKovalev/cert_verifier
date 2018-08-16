@@ -4,7 +4,6 @@
 
 #include "template_tests.h"
 #include "x509/X509StoreCtx.h"
-#include "x509/exceptions/SslVerifyException.h"
 #include "SslException.h"
 
 TEST_CASE( "x509StoreCtx memory test", "[storectx][x509]")
@@ -29,17 +28,10 @@ TEST_CASE( "x509StoreCtx test", "[storectx][x509]")
     param.setDepth(1);
     storeCtx.setParametrs(std::move(param));
     storeCtx.setStore(std::move(store));
-    /*try
-    {
-        //storeCtx.verify(cert);
-    }
-    catch (SslVerifyException& ex)
-    {
-        std::cout << ex.what() << std::endl;
-        std::cout << storeCtx.getErrorDepth() << std::endl;
-    }*/
-    CHECK_THROWS_AS( storeCtx.verify(cert), SslVerifyException);
 
+    SslVerifyException exception;
+    CHECK_FALSE(storeCtx.verify(cert, exception));
+    REQUIRE(exception.getCode() == X509_V_ERR_HOSTNAME_MISMATCH);
 
 //    size_t i = 0;
     for(const auto& chainCert : storeCtx.getChain())

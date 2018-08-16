@@ -65,13 +65,13 @@ TEST_CASE( "CrlDistributionPoints", "[cert][extension][crl]" )
     X509Certificate certificate = X509Certificate::from_pem(pem);
     StackOf<X509Extension> extensions = certificate.get_extensions();
 
+    REQUIRE(certificate.hasExtensions());
     auto it = std::find_if(extensions.begin(), extensions.end(),
                            [](const X509Extension& ext) -> bool{
                                return ext.nid() == NID_crl_distribution_points;
                            });
 
     REQUIRE(it != extensions.end());
-
     X509Extension extension = *it;
     CrlDistributionPoints points(extension);
 

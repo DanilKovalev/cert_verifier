@@ -30,14 +30,16 @@ public:
 
     X509* raw();
     const X509* raw() const;
+    X509* detach() noexcept;
 
     static X509Certificate from_pem(const std::string& pem);
-    std::string to_pem() const;
+    static X509* duplicate(X509 *pCert);
 
+    std::string to_pem() const;
     StackOf<X509Extension> get_extensions();
 
+    bool hasExtensions() const noexcept;
 private:
-    static X509* duplicate(X509 *pCert);
     void free() noexcept;
 
 private:

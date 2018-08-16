@@ -5,6 +5,7 @@
 #include "X509VerifyParam.h"
 #include "SslException.h"
 #include "utils/StackOf.h"
+#include "exceptions/SslVerifyException.h"
 
 #include <openssl/x509_vfy.h>
 
@@ -23,6 +24,7 @@ public:
     const X509_STORE_CTX* raw() const;
 
     void verify(X509Certificate& cert);
+    bool verify(X509Certificate& cert, SslVerifyException& ex);
     void setStore(X509Store&& store);
 
     void swap(X509StoreCtx& other) noexcept;

@@ -22,6 +22,8 @@ public:
     StackOf() : m_stack(createStack()) , m_acquired(true)
     {};
 
+    explicit StackOf(const struct stack_st* stack) : m_stack(duplicate(stack)), m_acquired(true){};
+
     StackOf(struct stack_st* stack, bool acquire) : m_stack(stack), m_acquired(acquire){};
 
     StackOf(const StackOf& obj)
@@ -65,10 +67,8 @@ public:
 
     struct stack_st* detach() noexcept
     {
-        struct stack_st* result = m_stack;
-        m_stack = nullptr;
         m_acquired = false;
-        return result;
+        return std::exchange(m_stack, nullptr);
     }
 
     struct stack_st* raw() noexcept
@@ -91,10 +91,10 @@ public:
         return Type(toRawType(sk_value(m_stack, i)), false);
     }
 
-    void push(Type& value)
+    void push(const Type& value)
     {
         Type newValue(value);
-        pushImpl(value.detach());
+        pushImpl(newValue.detach());
     }
 
     void push(Type&& value)
@@ -140,16 +140,19 @@ public:
     {
         return StackOfIterator<const Type>(m_stack, size());
     }
-    
-private:
-    struct stack_st* duplicate(struct stack_st* stack)
-    {
-        stack_st *result = sk_dup(stack);
-        if(result == nullptr)
-            throw SslException("[TODO] Failed to duplicate stack");
 
-        return result;
-    } 
+    struct stack_st* duplicate(const struct stack_st* stack)
+    {
+        StackOf newStack;
+        for (int i = 0; i < sk_num(stack); ++i)
+        {
+            Type value(Type::duplicate(toRawType(sk_value(stack, i))), true);
+            newStack.push(std::move(value));
+        }
+
+        return newStack.detach();
+    }
+private:
 
     void clearImpl()
     {
@@ -174,9 +177,10 @@ private:
 
     void pushImpl(typename Type::RawType* pRaw)
     {
-        if(sk_push(m_stack, pRaw) == nullptr)
+        if(sk_push(m_stack, pRaw) == 0)
             throw SslException("sk_push");
     }
+
 private:
     struct stack_st* m_stack;
     bool m_acquired;

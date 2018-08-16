@@ -7,7 +7,7 @@
 #include <cstring>
 
 bio_istring::bio_istring(const std::string *pStr)
- : bio(init_bio())
+ : m_bio(init_bio())
  , m_pStr(pStr)
  , m_offset(0)
 {
@@ -15,12 +15,13 @@ bio_istring::bio_istring(const std::string *pStr)
 
 bio_istring::~bio_istring()
 {
-    if(!bio)
-        return;
-
     try
     {
-       destroy();
+        if(m_bio && BIO_free(m_bio) != 1)
+            std::__throw_runtime_error("Failed to BIO_free");
+
+        if(m_bioMethod)
+            BIO_meth_free(m_bioMethod);
     }
     catch (std::exception& ex)
     {
@@ -63,52 +64,48 @@ size_t bio_istring::read(char *s, size_t nRead)
 
 BIO* bio_istring::get_bio()
 {
-    return bio;
-}
-
-void bio_istring::destroy()
-{
-    if ( BIO_free(bio) != 1)
-        std::__throw_runtime_error("Failed to BIO_free");
-
-    bio = nullptr;
+    return m_bio;
 }
 
 BIO* bio_istring::init_bio()
 {
-    static BIO_METHOD methods = {
-            BIO_TYPE_SOURCE_SINK,
-            "bio_istring",
-            nullptr,
-            s_read,
-            nullptr,
-            s_gets,
-            s_ctrl,
-            s_create,
-            s_destroy,
-            nullptr,
-    };
+    m_bioMethod = init_bio_method();
+    BIO* pBio = BIO_new(m_bioMethod);
 
-    BIO* pBio = BIO_new(&methods);
     if(pBio == nullptr)
         std::__throw_runtime_error("BIO_new(&methods)");
 
-    pBio->ptr = static_cast<void*>(this);
-    pBio->init = 1;
+    BIO_set_data(pBio, static_cast<void*>(this));
+    BIO_set_init(pBio, 1);
     return pBio;
+}
+
+BIO_METHOD* bio_istring::init_bio_method()
+{
+    BIO_METHOD* method = BIO_meth_new(BIO_TYPE_SOURCE_SINK, "bio_istring");
+    if(method == nullptr)
+        std::__throw_runtime_error("BIO_new(&methods)");
+
+    BIO_meth_set_read(method, bio_istring::s_read);
+    BIO_meth_set_gets(method, bio_istring::s_gets);
+    BIO_meth_set_ctrl(method, bio_istring::s_ctrl);
+    BIO_meth_set_create(method, bio_istring::s_create);
+    BIO_meth_set_destroy(method, bio_istring::s_destroy);
+
+    return method;
 }
 
 int bio_istring::s_read( BIO* pBio, char* pBuf, int bufLen )
 {
     auto nRead = boost::numeric_cast<size_t>(bufLen);
-    auto* pBio_str = static_cast<bio_istring*>(pBio->ptr);
+    auto* pBio_str = static_cast<bio_istring*>(BIO_get_data(pBio));
     return boost::numeric_cast<int>(pBio_str->read(pBuf, nRead));
 }
 
 int bio_istring::s_gets( BIO* pBio, char* pBuf, int bufLen )
 {
     auto nRead = boost::numeric_cast<size_t>(bufLen);
-    auto* pBio_str = static_cast<bio_istring*>(pBio->ptr);
+    auto* pBio_str = static_cast<bio_istring*>(BIO_get_data(pBio));
     return boost::numeric_cast<int>(pBio_str->get_line(pBuf, nRead));
 }
 
@@ -117,7 +114,7 @@ long bio_istring::s_ctrl( BIO* pBio, int cmd, long num, void *ptr )
     (void ) ptr;
     (void ) num;
 
-    auto* pBio_str = static_cast<bio_istring*>(pBio->ptr);
+    auto* pBio_str = static_cast<bio_istring*>(BIO_get_data(pBio));
     switch (cmd) {
         case BIO_CTRL_RESET:
             return -1;
@@ -138,8 +135,8 @@ int bio_istring::s_create( BIO* pBio )
     if (!pBio)
         return 0;
 
-    pBio->ptr = nullptr;
-    pBio->init = 0;
+    BIO_set_data(pBio, nullptr);
+    BIO_set_init(pBio, 0);
     return 1;
 }
 
@@ -148,10 +145,9 @@ int bio_istring::s_destroy( BIO* pBio )
     if (!pBio)
         return 0;
 
-    pBio->ptr = nullptr;
-    pBio->init = 0;
-    pBio->flags = 0;
-
+    BIO_set_data(pBio, nullptr);
+    BIO_set_init(pBio, 0);
+    BIO_set_flags(pBio, 0);
     return 1;
 }
 

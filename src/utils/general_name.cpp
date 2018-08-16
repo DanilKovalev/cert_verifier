@@ -9,7 +9,6 @@
 #include <stdexcept>
 #include <memory>
 
-
 general_name::general_name(GENERAL_NAME *name, bool acquire) noexcept
 : m_name(name)
 , m_acquired(acquire)
@@ -31,7 +30,9 @@ std::string to_string(GENERAL_NAME* name)
     int len = ASN1_STRING_to_UTF8(&out, name->d.uniformResourceIdentifier);
     if (len < 0)
         throw SslException("ASN1_STRING_to_UTF8");
-    std::unique_ptr<void , decltype(&CRYPTO_free)> ptr(static_cast<void*>(out), &CRYPTO_free);
+
+    auto deleter = [](unsigned char* out) {OPENSSL_free(out);};
+    std::unique_ptr<unsigned char, decltype(deleter)> ptr(out, deleter);
 
     return std::string(reinterpret_cast<char *>(out), boost::numeric_cast<size_t >(len));
 }

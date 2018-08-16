@@ -105,6 +105,12 @@ const X509* X509Certificate::raw() const
     return  m_cert;
 }
 
+X509* X509Certificate::detach() noexcept
+{
+    m_acquired = false;
+    return std::exchange(m_cert, nullptr);
+}
+
 X509Certificate X509Certificate::from_pem(const std::string &pem)
 {
     bio_istring bio(&pem);
@@ -115,7 +121,6 @@ X509Certificate X509Certificate::from_pem(const std::string &pem)
 
     return X509Certificate(pCert, true);
 }
-
 
 std::string X509Certificate::to_pem() const
 {
@@ -128,7 +133,12 @@ std::string X509Certificate::to_pem() const
 
 StackOf<X509Extension> X509Certificate::get_extensions()
 {
-    return StackOf<X509Extension>(reinterpret_cast<struct stack_st*>(m_cert->cert_info->extensions), false);
+    return StackOf<X509Extension>(reinterpret_cast<const struct stack_st*>(X509_get0_extensions(m_cert)));
+}
+
+bool X509Certificate::hasExtensions() const noexcept
+{
+    return m_cert && X509_get_ext_count(m_cert);
 }
 
 void X509Certificate::swap(X509Certificate& other) noexcept

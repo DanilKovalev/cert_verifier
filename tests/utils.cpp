@@ -21,3 +21,9 @@ std::vector<uint8_t> read_binary_file(const std::string& path)
     std::vector<uint8_t > result ((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     return result;
 }
+
+X509Certificate read_cert(const std::string& path)
+{
+    std::string pem = read_file(path);
+    return X509Certificate::from_pem(pem);
+}
