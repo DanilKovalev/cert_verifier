@@ -1,8 +1,9 @@
 #pragma once
 
-#include <iostream>
+#include "bio_guards.h"
 
 #include <openssl/bio.h>
+#include <iostream>
 
 class bio_ostring
 {
@@ -22,7 +23,7 @@ public:
 
 private:
     BIO* init_bio();
-    static BIO_METHOD* init_bio_method();
+    static BIO_METHOD* getBioMethod();
 
 private:
     static int  s_write( BIO* pBio, const char* pData, int dataLen );
@@ -32,7 +33,6 @@ private:
     static int  s_destroy( BIO* pBio );
 
 private:
-    BIO_METHOD* m_bioMethod;
     BIO* m_bio;
     std::string m_str;
 };

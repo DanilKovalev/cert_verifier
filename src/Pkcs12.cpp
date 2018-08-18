@@ -1,6 +1,6 @@
 #include "Pkcs12.h"
 
-#include "bio/bio_guard.h"
+#include "bio/bio_guards.h"
 #include "SslException.h"
 
 #include <boost/numeric/conversion/cast.hpp>

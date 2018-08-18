@@ -7,9 +7,8 @@
 
 TEST_CASE("Stack memory test", "[stackOf]")
 {
-    std::string path = "content/cert.pem";
-    X509Certificate cert1 = X509Certificate::from_pem(read_file("content/cert.pem"));
-    X509Certificate cert2 = X509Certificate::from_pem(read_file("content/toxchat.crt"));
+    X509Certificate cert1 = read_cert("content/cert.pem");
+    X509Certificate cert2 = read_cert("content/toxchat.crt");
 
     StackOf<X509Certificate> stack;
     stack.push(cert1);

@@ -13,7 +13,7 @@ public:
 
     SslVerifyException& operator=(const SslVerifyException& other) noexcept;
 
-    ~SslVerifyException() override {};
+    ~SslVerifyException() override = default;
 
     const char* what() const noexcept override;
     long getCode() const noexcept;

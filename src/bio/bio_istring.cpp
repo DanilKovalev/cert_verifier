@@ -1,5 +1,8 @@
 #include "bio_istring.h"
 
+#include "bio_guards.h"
+#include "SslException.h"
+
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <sstream>
@@ -19,9 +22,6 @@ bio_istring::~bio_istring()
     {
         if(m_bio && BIO_free(m_bio) != 1)
             std::__throw_runtime_error("Failed to BIO_free");
-
-        if(m_bioMethod)
-            BIO_meth_free(m_bioMethod);
     }
     catch (std::exception& ex)
     {
@@ -69,30 +69,34 @@ BIO* bio_istring::get_bio()
 
 BIO* bio_istring::init_bio()
 {
-    m_bioMethod = init_bio_method();
-    BIO* pBio = BIO_new(m_bioMethod);
+    BIO* pBio = BIO_new(getBioMethod());
 
     if(pBio == nullptr)
-        std::__throw_runtime_error("BIO_new(&methods)");
+        throw SslException("BIO_new");
 
     BIO_set_data(pBio, static_cast<void*>(this));
     BIO_set_init(pBio, 1);
     return pBio;
 }
 
-BIO_METHOD* bio_istring::init_bio_method()
+BIO_METHOD* bio_istring::getBioMethod()
 {
-    BIO_METHOD* method = BIO_meth_new(BIO_TYPE_SOURCE_SINK, "bio_istring");
-    if(method == nullptr)
-        std::__throw_runtime_error("BIO_new(&methods)");
 
-    BIO_meth_set_read(method, bio_istring::s_read);
-    BIO_meth_set_gets(method, bio_istring::s_gets);
-    BIO_meth_set_ctrl(method, bio_istring::s_ctrl);
-    BIO_meth_set_create(method, bio_istring::s_create);
-    BIO_meth_set_destroy(method, bio_istring::s_destroy);
+    static bioMethodPtr method = createBioMethodGuard(nullptr);
+    if(method)
+        return method.get();
 
-    return method;
+    method = createBioMethodGuard(BIO_meth_new(BIO_TYPE_SOURCE_SINK, "bio_istring"));
+    if(!method)
+        throw  SslException("BIO_meth_new");
+
+    BIO_meth_set_read(method.get(), bio_istring::s_read);
+    BIO_meth_set_gets(method.get(), bio_istring::s_gets);
+    BIO_meth_set_ctrl(method.get(), bio_istring::s_ctrl);
+    BIO_meth_set_create(method.get(), bio_istring::s_create);
+    BIO_meth_set_destroy(method.get(), bio_istring::s_destroy);
+
+    return method.get();
 }
 
 int bio_istring::s_read( BIO* pBio, char* pBuf, int bufLen )
