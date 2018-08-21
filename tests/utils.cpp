@@ -1,5 +1,6 @@
 #include "utils.h"
 #include <fstream>
+#include "http/HttpClient.h"
 
 std::string read_file(const std::string& path)
 {
