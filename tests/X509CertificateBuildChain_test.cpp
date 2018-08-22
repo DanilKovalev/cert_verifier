@@ -51,7 +51,6 @@ TEST_CASE( "Build chain test", "[cert][connect]" )
 
     std::cout << authorityInformationAccess.oscp() << std::endl;
     std::cout << authorityInformationAccess.ca_issuer() << std::endl;
-//    get_http(authorityInformationAccess.ca_issuer());
 
 //    X509Store store2;
 //    store2.loadDefaultLocation();

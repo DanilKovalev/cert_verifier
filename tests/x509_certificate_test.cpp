@@ -4,7 +4,7 @@
 #include "template_tests.h"
 #include "x509/X509Certificate.h"
 
-TEST_CASE( "Cert read", "[cert]" )
+TEST_CASE( "Cert read ", "[cert]" )
 {
     std::string path = "content/";
     SECTION("cert")
@@ -21,6 +21,8 @@ TEST_CASE( "Cert read", "[cert]" )
 
     std::string pem = read_file(path);
     REQUIRE_NOTHROW(X509Certificate::from_pem(pem));
+    X509Certificate cert = X509Certificate::from_pem(pem);
+    REQUIRE_NOTHROW(X509Certificate::from_der(cert.to_der()));
 }
 
 TEST_CASE("Cert memory test", "[store][x509]")

@@ -33,9 +33,12 @@ public:
     X509* detach() noexcept;
 
     static X509Certificate from_pem(const std::string& pem);
+    static X509Certificate from_der(const std::vector<uint8_t>& pem);
+
     static X509* duplicate(X509 *pCert);
 
     std::string to_pem() const;
+    std::vector<uint8_t> to_der() const;
     StackOf<X509Extension> get_extensions();
 
     bool hasExtensions() const noexcept;

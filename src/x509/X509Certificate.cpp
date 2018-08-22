@@ -1,11 +1,13 @@
 #include "X509Certificate.h"
 
-#include "../bio/bio_istring.h"
-#include "../bio/bio_ostring.h"
+#include "bio/bio_istring.h"
+#include "bio/bio_ostring.h"
 #include "bio/bio_guards.h"
-#include "../SslException.h"
+#include "SslException.h"
 
 #include <openssl/pem.h>
+
+#include <boost/numeric/conversion/cast.hpp>
 
 X509Certificate::X509Certificate(X509 *pCert, bool acquire) noexcept
 : m_cert(pCert)
@@ -122,6 +124,16 @@ X509Certificate X509Certificate::from_pem(const std::string &pem)
     return X509Certificate(pCert, true);
 }
 
+X509Certificate X509Certificate::from_der(const std::vector<uint8_t>& der)
+{
+    X509* pCert = nullptr;
+    const uint8_t *pData = der.data();
+    if (!d2i_X509(&pCert, &pData, boost::numeric_cast<long>(der.size())))
+        throw SslException("Failed to read X509 certificate from der format");
+
+    return X509Certificate(pCert, true);
+}
+
 std::string X509Certificate::to_pem() const
 {
     bio_ostring bio;
@@ -129,6 +141,17 @@ std::string X509Certificate::to_pem() const
         throw SslException("Failed to write X509 certificate");
 
     return bio.detach_string();
+}
+
+std::vector<uint8_t> X509Certificate::to_der() const
+{
+    auto bio = createBioGuard(BIO_new(BIO_s_mem()));
+    if(i2d_X509_bio(bio.get(), m_cert) != 1)
+        throw SslException("i2d_X509");
+
+    uint8_t* data = nullptr;
+    long readSize = BIO_get_mem_data(bio.get(), &data);
+    return std::vector<uint8_t>(data, data + readSize);
 }
 
 StackOf<X509Extension> X509Certificate::get_extensions()
