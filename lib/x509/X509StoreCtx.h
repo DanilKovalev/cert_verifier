@@ -8,6 +8,7 @@
 #include "exceptions/SslVerifyException.h"
 
 #include <openssl/x509_vfy.h>
+#include <optional>
 
 class X509StoreCtx
 {
@@ -29,12 +30,14 @@ public:
 
     void swap(X509StoreCtx& other) noexcept;
 
-    void setParametrs(X509VerifyParam&& param) noexcept;
+    void setParameters(X509VerifyParam&& param) noexcept;
     void setAdditionalCertificates(const StackOf<X509Certificate>& certsChain);
     void setAdditionalCertificates(StackOf<X509Certificate>&& certsChain) noexcept;
 
     StackOf<X509Certificate> getChain();
     int getErrorDepth() const noexcept;
+
+    bool isCertificatePresent();
 
 private:
     void free() noexcept;

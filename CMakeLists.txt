@@ -16,5 +16,6 @@ set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/out/lib)
 
 
 enable_testing()
+add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(tests)

@@ -32,7 +32,7 @@ TEST_CASE( "Build chain test", "[cert][connect]" )
     X509VerifyParam param;
 //    param.setHost(hostName);
     param.setDepth(2);
-    storeCtx.setParametrs(std::move(param));
+    storeCtx.setParameters(std::move(param));
 
 
     SslVerifyException exception;
@@ -61,7 +61,7 @@ TEST_CASE( "Build chain test", "[cert][connect]" )
 //    X509Store store2;
 //    store2.loadDefaultLocation();
 //    storeCtx.setStore(std::move(store2));
-//    storeCtx.setParametrs(X509VerifyParam());
+//    storeCtx.setParameters(X509VerifyParam());
     storeCtx.setAdditionalCertificates(additionalCertificates);
     CHECK(storeCtx.verify(certificate, exception));
 

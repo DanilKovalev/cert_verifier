@@ -96,7 +96,7 @@ void X509StoreCtx::init()
         throw SslException("X509_STORE_CTX_init");
 }
 
-void X509StoreCtx::setParametrs(X509VerifyParam&& param) noexcept
+void X509StoreCtx::setParameters(X509VerifyParam&& param) noexcept
 {
     m_param = std::move(param);
 }

@@ -26,7 +26,7 @@ TEST_CASE( "x509StoreCtx test", "[storectx][x509]")
     X509VerifyParam param;
     param.setHost("aaa.com");
     param.setDepth(1);
-    storeCtx.setParametrs(std::move(param));
+    storeCtx.setParameters(std::move(param));
     storeCtx.setStore(std::move(store));
 
     SslVerifyException exception;

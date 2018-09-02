@@ -1,8 +1,8 @@
-include_directories(./)
+include_directories(${PROJECT_SOURCE_DIR}/lib)
 
 file(GLOB_RECURSE SOURCE_FILES
         "*.cpp"
         "*.h")
 
-add_library(my_ssl ${SOURCE_FILES} x509/X509VerifyParam.cpp x509/X509VerifyParam.h)
-target_link_libraries(my_ssl -lcrypto  -lssl -lcurl)
+add_executable(certverify ${SOURCE_FILES})
+target_link_libraries(certverify my_ssl -lboost_program_options )
