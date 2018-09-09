@@ -1,40 +1,31 @@
 #include "SslVerifyException.h"
 
+#include <openssl/err.h>
 #include <openssl/x509.h>
+#include <boost/numeric/conversion/cast.hpp>
 
-SslVerifyException::SslVerifyException() noexcept
-: m_error(0)
+namespace
 {
+    struct ssl_verify_error_category : std::error_category
+    {
+        ~ssl_verify_error_category() override = default;
+
+        const char* name() const noexcept override
+        {
+            return "ssl verify";
+        }
+
+        std::string message(int ec) const override
+        {
+            return X509_verify_cert_error_string(static_cast<long>(ec));
+        }
+    };
 }
 
-SslVerifyException::SslVerifyException(long error) noexcept
- : m_error(error)
-{
-}
 
-SslVerifyException::SslVerifyException(const SslVerifyException& other) noexcept
- : m_error(other.m_error)
-{
-}
 
-SslVerifyException::SslVerifyException(SslVerifyException&& other) noexcept
- : m_error(other.m_error)
+const std::error_category& ssl_verify_category() noexcept
 {
+    static ssl_verify_error_category instance;
+    return instance;
 }
-
-SslVerifyException& SslVerifyException::operator=(const SslVerifyException& other) noexcept
-{
-    m_error = other.getCode();
-    return *this;
-}
-
-const char* SslVerifyException::what() const noexcept
-{
-    return X509_verify_cert_error_string(m_error);
-}
-
-long SslVerifyException::getCode() const noexcept
-{
-    return m_error;
-}
-

@@ -31,7 +31,7 @@ TEST_CASE( "x509StoreCtx test", "[storectx][x509]")
 
     SslVerifyException exception;
     CHECK_FALSE(storeCtx.verify(cert, exception));
-    REQUIRE(exception.getCode() == X509_V_ERR_HOSTNAME_MISMATCH);
+    REQUIRE(exception.code().value() == X509_V_ERR_HOSTNAME_MISMATCH);
 
 //    size_t i = 0;
     for(const auto& chainCert : storeCtx.getChain())

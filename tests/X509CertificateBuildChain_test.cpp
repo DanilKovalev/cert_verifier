@@ -66,6 +66,6 @@ TEST_CASE( "Build chain test", "[cert][connect]" )
     CHECK(storeCtx.verify(certificate, exception));
 
     std::cout << exception.what() << std::endl;
-    std::cout << exception.getCode() << std::endl;
+    std::cout << exception.code().value() << std::endl;
     std::cout << storeCtx.getErrorDepth() << std::endl;
 }
