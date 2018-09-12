@@ -118,7 +118,7 @@ X509Certificate X509Certificate::from_pem(const std::string &pem)
     bio_istring bio(&pem);
 
     X509* pCert = nullptr;
-    if( !PEM_read_bio_X509(bio.get_bio(), &pCert, nullptr, nullptr) )
+    if( !PEM_read_bio_X509(bio.raw(), &pCert, nullptr, nullptr) )
         throw SslException("Failed to read X509 certificate");
 
     return X509Certificate(pCert, true);

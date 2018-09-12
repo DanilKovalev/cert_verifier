@@ -31,30 +31,29 @@ bio_istring::~bio_istring()
 
 size_t  bio_istring::get_line(char *s, size_t nRead, char delimiter)
 {
-    size_t length = m_pStr->size() - m_offset;
+    if (nRead == 0)
+        return 0;
 
-    if(nRead - 1 <  length)
-        length = nRead - 1;
-
-    for(size_t i = 0; i < length; i++)
+    nRead--; //for '\0'
+    size_t lineLength = 0;
+    for(size_t i = 0; i < nRead; i++)
     {
         if ((*m_pStr)[m_offset + i] == delimiter)
         {
-            length = i + 1;
+            lineLength = i + 1;
             break;
         }
     }
 
-    nRead = read(s, length);
-    if(nRead > 0)
-        s[nRead] = '\0';
+    nRead = read(s, lineLength);
+    s[nRead] = '\0';
 
     return nRead;
 }
 
 size_t bio_istring::read(char *s, size_t nRead)
 {
-    if (nRead + m_offset > m_pStr->size())
+    if (nRead > m_pStr->size() - m_offset)
         nRead = m_pStr->size() - m_offset + 1;
 
     memcpy(s, m_pStr->data() + m_offset, nRead);
@@ -62,7 +61,7 @@ size_t bio_istring::read(char *s, size_t nRead)
     return nRead;
 }
 
-BIO* bio_istring::get_bio()
+BIO* bio_istring::raw()
 {
     return m_bio;
 }
@@ -81,7 +80,6 @@ BIO* bio_istring::init_bio()
 
 BIO_METHOD* bio_istring::getBioMethod()
 {
-
     static bioMethodPtr method = createBioMethodGuard(nullptr);
     if(method)
         return method.get();

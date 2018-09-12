@@ -42,7 +42,7 @@ PrivateKey PrivateKey::from_pem(const std::string& pem)
     bio_istring bio(&pem);
 
     EVP_PKEY* pRaw_key = nullptr;
-    if( !PEM_read_bio_PrivateKey(bio.get_bio(), &pRaw_key, nullptr, nullptr) )
+    if( !PEM_read_bio_PrivateKey(bio.raw(), &pRaw_key, nullptr, nullptr) )
         throw SslException("Failed to read private key");
 
     return PrivateKey(pRaw_key);

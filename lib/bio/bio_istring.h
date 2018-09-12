@@ -11,12 +11,16 @@ public:
     bio_istring(bio_istring&) = delete;
     bio_istring& operator =(const bio_istring&) = delete;
 
+    bio_istring(bio_istring&&) = delete;
+    bio_istring& operator =(const bio_istring&&) = delete;
+
     ~bio_istring();
 
-    BIO* get_bio();
+    BIO* raw();
 
     size_t get_line(char *s, size_t n, char delimiter = '\n');
     size_t read(char *s, size_t n);
+
 private:
     BIO* init_bio();
     static BIO_METHOD* getBioMethod();
