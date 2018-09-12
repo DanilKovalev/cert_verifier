@@ -33,12 +33,5 @@ SslException::SslException(const char* what)
 {
 }
 
-SslException::SslException(const SslException& obj)
-: std::runtime_error(obj)
-, m_code(obj.code())
-{
-}
-
-
 
 

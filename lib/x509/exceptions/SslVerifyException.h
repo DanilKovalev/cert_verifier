@@ -17,10 +17,9 @@ public:
     SslVerifyException(long ec, const char* what)
             : SslVerifyException(std::error_code(static_cast<int>(ec), ssl_verify_category()), what) { }
 
-    SslVerifyException(const SslVerifyException& obj)
-        : std::runtime_error(obj), m_code(obj.code()) {}
+    SslVerifyException(const SslVerifyException& obj) noexcept = default;
 
-    virtual ~SslVerifyException() noexcept {};
+    ~SslVerifyException() override = default;
 
     const std::error_code& code() const noexcept { return m_code; }
 
