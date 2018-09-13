@@ -10,12 +10,30 @@ bio_ostring::bio_ostring()
  , m_str()
 {}
 
+bio_ostring::bio_ostring(bio_ostring&& other) noexcept
+ : m_bio(std::exchange(other.m_bio, nullptr))
+ , m_str(std::move( other.m_str))
+{
+}
+
+bio_ostring& bio_ostring::operator=(bio_ostring&& other) noexcept
+{
+    this->swap(other);
+    other.~bio_ostring();
+    return *this;
+}
+
+void bio_ostring::swap(bio_ostring& other)
+{
+    std::swap(other.m_str, this->m_str);
+    std::swap(other.m_bio, this->m_bio);
+}
+
 bio_ostring::~bio_ostring()
 {
     try
     {
-        if(m_bio && BIO_free(m_bio) != 1)
-            std::__throw_runtime_error("Failed to BIO_free");
+        destroy();
     }
     catch (std::exception& ex)
     {
@@ -23,11 +41,16 @@ bio_ostring::~bio_ostring()
     }
 }
 
+void bio_ostring::destroy()
+{
+    if(m_bio && BIO_free(m_bio) != 1)
+        std::__throw_runtime_error("Failed to BIO_free");
+}
+
 BIO* bio_ostring::get_bio()
 {
     return m_bio;
 }
-
 
 const std::string& bio_ostring::get_string() const
 {
@@ -37,14 +60,6 @@ const std::string& bio_ostring::get_string() const
 std::string bio_ostring::detach_string()
 {
     return std::move(m_str);
-}
-
-void bio_ostring::destroy()
-{
-    if ( BIO_free(m_bio) != 1)
-        std::__throw_runtime_error("Failed to BIO_free");
-
-    m_bio = nullptr;
 }
 
 BIO_METHOD* bio_ostring::getBioMethod()

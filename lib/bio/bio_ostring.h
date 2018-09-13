@@ -9,8 +9,13 @@ class bio_ostring
 {
 public:
     bio_ostring();
-    bio_ostring(bio_ostring&) = delete;
+    bio_ostring(const bio_ostring&) = delete;
     bio_ostring& operator =(const bio_ostring&) = delete;
+
+    bio_ostring(bio_ostring&& other) noexcept;
+    bio_ostring& operator =(bio_ostring&& other) noexcept;
+
+    void swap(bio_ostring& other);
 
     ~bio_ostring();
 
@@ -19,11 +24,11 @@ public:
     const std::string& get_string() const;
     std::string detach_string();
 
-    void destroy();
-
 private:
     BIO* init_bio();
     static BIO_METHOD* getBioMethod();
+
+    void destroy();
 
 private:
     static int  s_write( BIO* pBio, const char* pData, int dataLen );

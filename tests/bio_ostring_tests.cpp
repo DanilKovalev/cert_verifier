@@ -1,6 +1,8 @@
 #include <catch.hpp>
 #include <bio/bio_ostring.h>
 #include <boost/numeric/conversion/cast.hpp>
+#include <SslException.h>
+#include "template_tests.h"
 
 TEST_CASE( "bio ostring tests", "[m_bio]" )
 {
@@ -22,3 +24,8 @@ TEST_CASE( "bio ostring tests", "[m_bio]" )
     REQUIRE(result == test_str);
 }
 
+TEST_CASE("bio_ostream memory test", "[bio][memory]")
+{
+    bio_ostring bio;
+    REQUIRE_NOTHROW(move_test(bio));
+}
