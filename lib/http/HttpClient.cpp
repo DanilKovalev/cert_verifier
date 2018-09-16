@@ -71,7 +71,7 @@ std::vector<uint8_t> HttpClient::perform()
     curl_easy_getinfo(m_handler, CURLINFO_RESPONSE_CODE, &httpCode);
 
     if(httpCode != 200)
-        throw HttpException(httpCode);
+        throw HttpException(HttpCode(httpCode));
 
     return body;
 }

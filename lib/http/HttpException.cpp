@@ -1,17 +1,46 @@
 #include "HttpException.h"
 
-HttpException::HttpException(CURLcode curlCode)
- : m_reason(curl_easy_strerror(curlCode))
+namespace
 {
+    struct curl_error_category : std::error_category
+    {
+        ~curl_error_category() override = default;
 
+        const char* name() const noexcept override
+        {
+            return "curl";
+        }
+
+        std::string message(int ec) const override
+        {
+            return curl_easy_strerror(static_cast<CURLcode>(ec));
+        }
+    };
+
+    struct http_error_category : std::error_category
+    {
+        ~http_error_category() override = default;
+
+        const char* name() const noexcept override
+        {
+            return "http";
+        }
+
+        std::string message(int ec) const override
+        {
+            return std::to_string(ec);
+        }
+    };
 }
 
-HttpException::HttpException(long httpCode)
-: m_reason("Bad http code: " + std::to_string(httpCode))
+const std::error_category& curl_category() noexcept
 {
+    static curl_error_category instance;
+    return instance;
 }
 
-const char* HttpException::what() const noexcept
+const std::error_category& http_category() noexcept
 {
-    return  m_reason.c_str();
+    static http_error_category instance;
+    return instance;
 }
