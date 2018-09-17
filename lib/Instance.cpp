@@ -34,7 +34,7 @@ Instance::~Instance()
     RAND_cleanup ();
     EVP_cleanup ();
     CRYPTO_cleanup_all_ex_data();
-    SSL_COMP_free_compression_methods();
+    //SSL_COMP_free_compression_methods();
 }
 
 

@@ -17,7 +17,7 @@ public:
     SslVerifyException(long ec, const char* what)
             : SslVerifyException(std::error_code(static_cast<int>(ec), ssl_verify_category()), what) { }
 
-    SslVerifyException(const SslVerifyException& obj) noexcept = default;
+    SslVerifyException(const SslVerifyException& obj) = default;
 
     ~SslVerifyException() override = default;
 

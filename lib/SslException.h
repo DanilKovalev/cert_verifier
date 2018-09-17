@@ -17,7 +17,7 @@ public:
     SslException(int ec, const char* what)
         : SslException(std::error_code(ec, ssl_category()), what) { }
 
-    SslException(const SslException& other) noexcept = default;
+    SslException(const SslException& other) = default;
 
     ~SslException() override = default;
 

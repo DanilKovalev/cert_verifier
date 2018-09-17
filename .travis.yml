@@ -1,0 +1,30 @@
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - dpkg
+    - g++-7
+    - cmake
+    - libcurl4-openssl-dev
+    - libboost-all-dev
+
+language: cpp
+
+before_install:
+- curl http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg | sudo apt-key add -
+- echo "deb http://archive.ubuntu.com/ubuntu/ bionic main universe restricted" | sudo tee /etc/apt/sources.list
+- sudo apt-get update -qq
+- sudo apt-get install -y --no-install-recommends libssl-dev catch
+
+before_script:
+- export CC=/usr/bin/gcc-7
+- export CXX=/usr/bin/g++-7
+- gcc -v && g++ -v && cmake --version
+- dpkg -l
+
+script:
+- mkdir build
+- cd build
+- cmake .. && make
+- cd ../tests && ../out/test/test_lib

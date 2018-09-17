@@ -50,7 +50,7 @@ public:
     HttpException(HttpCode code, const char* what)
             : HttpException(std::make_error_code(code), what) {}
 
-    HttpException(const HttpException& obj) noexcept = default;
+    HttpException(const HttpException& obj) = default;
 
     ~HttpException() override = default;
 
