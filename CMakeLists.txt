@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(openssl)
+project(cert_verifier)
 
 set(CMAKE_CXX_STANDARD 14)
 add_definitions(-Weffc++ -Wall -Wextra -Wunused-parameter -Wstrict-overflow=5 -Wundef -Wshadow -Wcast-qual -Wcast-align -Wconversion
