@@ -3,8 +3,6 @@
 #include "utils/StackOf.h"
 
 #include "x509/X509Certificate.h"
-#include "x509/extensions/X509ExtensionIterator.h"
-#include "x509/extensions/X509ExtensionList.h"
 #include "x509/extensions/AuthorityInformationAccess.h"
 #include "x509/extensions/CrlDistributionPoints.h"
 #include <openssl/x509v3.h>
