@@ -44,6 +44,12 @@ private:
     T* m_raw;
 };
 
+template <typename T>
+ObjectHolder<T> makeObjectHolder(T* obj)
+{
+    return ObjectHolder<T>(obj);
+}
+
 namespace std
 {
     template <typename T>

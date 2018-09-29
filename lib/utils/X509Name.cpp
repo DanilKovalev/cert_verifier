@@ -22,7 +22,7 @@ std::string std::to_string(const X509_NAME* raw)
     if (name == nullptr)
         throw SslException("X509_NAME_oneline");
 
-    ObjectHolder<char > holder(name);
+    auto holder = makeObjectHolder(name);
     return name;
 }
 
