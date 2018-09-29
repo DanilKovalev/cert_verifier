@@ -3,6 +3,7 @@
 #include "bio/bio_istring.h"
 #include "bio/bio_ostring.h"
 #include "bio/bio_guards.h"
+#include "utils/X509Name.h"
 #include "SslException.h"
 
 #include <openssl/pem.h>
@@ -60,24 +61,21 @@ std::vector<uint8_t> X509Certificate::digest(const EVP_MD* type) const
 
 std::string X509Certificate::get_issuer_name() const
 {
-    char* name = X509_NAME_oneline(X509_get_issuer_name(m_cert), nullptr, 0);
+    X509_NAME* name = X509_get_issuer_name(m_cert);
+    if(name == nullptr)
+        throw SslException("X509_get_issuer_name");
 
-    std::string name_str(name);
-    OPENSSL_free(name);
-
-    return name_str;
+    return std::to_string(name);
 }
 
 std::string X509Certificate::get_subject_name() const
 {
-    char* name = X509_NAME_oneline(X509_get_subject_name(m_cert), nullptr, 0);
+    X509_NAME* name = X509_get_subject_name(m_cert);
+    if(name == nullptr)
+        throw SslException("X509_get_subject_name");
 
-    std::string name_str(name);
-    OPENSSL_free(name);
-
-    return name_str;
+    return std::to_string(name);
 }
-
 
 X509* X509Certificate::duplicate(X509 *pCert)
 {

@@ -6,7 +6,7 @@
 class general_name
 {
 public:
-    general_name( GENERAL_NAME* name, bool acquire ) noexcept ;
+    general_name( GENERAL_NAME* name, bool acquire ) noexcept;
 
     std::string get_string();
 
