@@ -56,7 +56,7 @@ public:
         return *this;
     }
     
-    ~StackOf()
+    virtual ~StackOf()
     {
         if (!m_acquired || m_stack == nullptr)
             return;

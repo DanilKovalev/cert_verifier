@@ -8,17 +8,27 @@
 #include <vector>
 
 
-DistPoint::DistPoint(DIST_POINT *point)
-: m_point(point)
+DistPoint::DistPoint(DIST_POINT *point, bool acquire) noexcept
+ : m_point(point)
+ , m_acquired(acquire)
 {
 }
 
 DistPoint::DistPoint(DistPoint && rhs) noexcept
-: m_point(std::exchange(rhs.m_point, nullptr))
+ : m_point(std::exchange(rhs.m_point, nullptr))
+ , m_acquired(std::exchange(rhs.m_acquired, false))
 {
 }
 
-DistPoint::~DistPoint() = default;
+DistPoint::~DistPoint()
+{
+    if(!m_acquired)
+        return;
+
+    DIST_POINT_free(m_point);
+    m_acquired = false;
+    m_point = nullptr;
+}
 
 std::vector<std::string> DistPoint::get_distribution_point_names()
 {

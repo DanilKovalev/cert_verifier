@@ -2,29 +2,22 @@
 
 #include "X509Extension.h"
 #include "DistPoint.h"
-#include <openssl/x509v3.h>
+#include "utils/StackOf.h"
 
 #include <string>
+#include <openssl/x509v3.h>
 
-class CrlDistributionPoints : public X509Extension
+class CrlDistributionPoints : public StackOf<DistPoint>
 {
 public:
-    explicit CrlDistributionPoints(X509Extension& ext);
-    CrlDistributionPoints(const CrlDistributionPoints&) = delete;
-    CrlDistributionPoints(CrlDistributionPoints&& ) noexcept;
-    CrlDistributionPoints& operator=(const CrlDistributionPoints& ) = delete;
+    CrlDistributionPoints(CRL_DIST_POINTS* raw, bool acquire);
+    CrlDistributionPoints(CrlDistributionPoints&& other) noexcept;
 
-    ~CrlDistributionPoints() override;
+    CrlDistributionPoints& operator =(CrlDistributionPoints&& other) noexcept;
 
-    int size() const noexcept;
-    bool empty() const noexcept;
-    DistPoint operator[](int);
+    ~CrlDistributionPoints() override = default;
 
-    friend bool operator == (const CrlDistributionPoints& lhs,
-                             const CrlDistributionPoints& rhs) noexcept;
-
-private:
-    CRL_DIST_POINTS* m_points;
+    static CrlDistributionPoints fromExtension(X509Extension &ext);
 };
 
 

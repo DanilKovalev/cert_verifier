@@ -7,7 +7,9 @@
 class DistPoint
 {
 public:
-    explicit DistPoint(DIST_POINT* point);
+    typedef DIST_POINT RawType;
+
+    DistPoint(DIST_POINT* point, bool acquire) noexcept;
     DistPoint(DistPoint&& ) noexcept;
     DistPoint(const DistPoint& ) = delete;
     DistPoint& operator=(const DistPoint& ) = delete;
@@ -18,6 +20,7 @@ public:
 
 private:
     DIST_POINT* m_point;
+    bool m_acquired;
 };
 
 
