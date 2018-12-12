@@ -93,3 +93,12 @@ std::vector<uint8_t> HttpClient::request(const std::string& url, bool followLoca
     client.followLocation(followLocation);
     return client.perform();
 }
+
+std::string HttpClient::getUrlSchema(const std::string& url) noexcept
+{
+    auto pos = url.find(':');
+    if(pos == std::string::npos)
+        return "";
+
+    return url.substr(pos);
+}

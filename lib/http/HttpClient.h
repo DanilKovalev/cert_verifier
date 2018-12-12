@@ -23,6 +23,7 @@ public:
     std::vector<uint8_t> perform();
 
     static std::vector<uint8_t> request(const std::string& url, bool followLocation = true);
+    static std::string getUrlSchema(const std::string& url) noexcept;
 
 private:
     static CURL* createCurlHandler();
