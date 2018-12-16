@@ -6,10 +6,10 @@
 #include <openssl/pem.h>
 #include <utility>
 
-PrivateKey::PrivateKey(EVP_PKEY *pKey) noexcept
+PrivateKey::PrivateKey(EVP_PKEY *pKey, bool acquire) noexcept
 : m_key(pKey)
+, m_acquired(acquire)
 {
-
 }
 
 PrivateKey::~PrivateKey() noexcept
@@ -19,11 +19,15 @@ PrivateKey::~PrivateKey() noexcept
 
 PrivateKey::PrivateKey(PrivateKey&& rhs) noexcept
 : m_key(std::exchange(rhs.m_key, nullptr))
+, m_acquired(std::exchange(rhs.m_acquired, false))
 {}
 
 PrivateKey& PrivateKey::operator=(PrivateKey&& rhs) noexcept
 {
-    m_key = std::exchange(rhs.m_key, nullptr);
+    if (this == &rhs)
+        return *this;
+
+    swap(rhs);
     return *this;
 }
 
@@ -45,7 +49,7 @@ PrivateKey PrivateKey::from_pem(const std::string& pem)
     if( !PEM_read_bio_PrivateKey(bio.raw(), &pRaw_key, nullptr, nullptr) )
         throw SslException("Failed to read private key");
 
-    return PrivateKey(pRaw_key);
+    return PrivateKey(pRaw_key, true);
 }
 
 std::string PrivateKey::to_pem() const
@@ -58,8 +62,18 @@ std::string PrivateKey::to_pem() const
     return bio.detach_string();
 }
 
-void PrivateKey::free()
+void PrivateKey::free() noexcept
 {
-    EVP_PKEY_free(m_key);
+    if(m_acquired)
+        EVP_PKEY_free(m_key);
+
+    m_key = nullptr;
+    m_acquired = false;
+}
+
+void PrivateKey::swap(PrivateKey& other) noexcept
+{
+    std::swap(this->m_acquired, other.m_acquired);
+    std::swap(this->m_key, other.m_key);
 }
 

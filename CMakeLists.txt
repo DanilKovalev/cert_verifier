@@ -4,7 +4,7 @@ project(cert_verifier)
 set(CMAKE_CXX_STANDARD 14)
 add_definitions(-Weffc++ -Wall -Wextra -Wunused-parameter -Wstrict-overflow=5 -Wundef -Wshadow -Wcast-qual -Wcast-align -Wconversion
         -Wsign-conversion  -Wredundant-decls -Wdisabled-optimization -Woverloaded-virtual -Wctor-dtor-privacy -Wnon-virtual-dtor
-        -Wold-style-cast -Wlogical-op -Wunused-result -D_THREAD_SAFE)
+        -Wlogical-op -Wunused-result -D_THREAD_SAFE)
 
 set ("${PROJECT}_BINARY_DIR"  out)
 set (EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/${${PROJECT}_BINARY_DIR})

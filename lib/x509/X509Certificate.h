@@ -57,6 +57,5 @@ namespace std
     {
         a.swap(b);
     }
-
 }
 

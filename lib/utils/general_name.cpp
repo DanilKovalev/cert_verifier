@@ -26,15 +26,15 @@ std::string to_string(GENERAL_NAME* name)
     if(name->type != GEN_URI)
         throw std::runtime_error("unsupported general name type ");
 
-    unsigned char* out;
-    int len = ASN1_STRING_to_UTF8(&out, name->d.uniformResourceIdentifier);
+    unsigned char* result;
+    int len = ASN1_STRING_to_UTF8(&result, name->d.uniformResourceIdentifier);
     if (len < 0)
         throw SslException("ASN1_STRING_to_UTF8");
 
     auto deleter = [](unsigned char* out) {OPENSSL_free(out);};
-    std::unique_ptr<unsigned char, decltype(deleter)> ptr(out, deleter);
+    std::unique_ptr<unsigned char, decltype(deleter)> ptr(result, deleter);
 
-    return std::string(reinterpret_cast<char *>(out), boost::numeric_cast<size_t >(len));
+    return std::string(reinterpret_cast<char *>(result), boost::numeric_cast<size_t >(len));
 }
 
 
