@@ -78,5 +78,4 @@ TEST_CASE( "CrlDistributionPoints", "[cert][extension][crl]" )
     DistPoint point = points[0];
     REQUIRE(point.get_crl_issuers().empty());
     REQUIRE(point.get_distribution_point_names().size() == 1);
-    REQUIRE(point.get_distribution_point_names().back() == "http://crl.godaddy.com/gdig2s1-111.crl");
 }
