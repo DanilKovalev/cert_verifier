@@ -93,7 +93,7 @@ int main(int argc, char** argv)
 {
     po::variables_map vm = init_options(argc, argv);
 
-    Pkcs12Data data;
+    /*Pkcs12Data data;
 
     data.cert = read_certificate(vm["certificate"].as<std::string>());
     StackOf<X509Certificate> additionalCerts;
@@ -109,5 +109,5 @@ int main(int argc, char** argv)
 
     Pkcs12::create(data, "").toDer();
     auto& ssl_instance = Instance::get();
-    (void)ssl_instance;
+    (void)ssl_instance;*/
 }
