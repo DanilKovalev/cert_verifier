@@ -13,7 +13,7 @@ public:
     PrivateKey& operator=(const PrivateKey& rhs) = delete;
     PrivateKey& operator=(PrivateKey&& rhs) noexcept;
 
-    ~PrivateKey();
+    ~PrivateKey() noexcept;
     void swap(PrivateKey& other) noexcept;
 
     EVP_PKEY* raw() noexcept;
