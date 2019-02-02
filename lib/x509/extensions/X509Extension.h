@@ -24,8 +24,6 @@ public:
     bool is_critical() const noexcept;
     int nid() const noexcept;
 
-    static X509Extension create_wrapper(X509_EXTENSION* ext);
-    static X509Extension create_attached(X509_EXTENSION* ext);
     static X509_EXTENSION* duplicate(X509_EXTENSION *pExt);
 
 private:

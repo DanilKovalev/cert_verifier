@@ -91,16 +91,6 @@ int X509Extension::nid() const noexcept
     return OBJ_obj2nid(obj);
 }
 
-X509Extension X509Extension::create_wrapper(X509_EXTENSION *ext)
-{
-    return X509Extension(ext, false);
-}
-
-X509Extension X509Extension::create_attached(X509_EXTENSION *ext)
-{
-    return X509Extension(ext, true);
-}
-
 void swap(X509Extension& a, X509Extension& b) noexcept
 {
     std::swap(a.m_ext, b.m_ext);
