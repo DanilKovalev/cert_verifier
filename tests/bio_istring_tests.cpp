@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <bio/bio_istring.h>
 #include <boost/numeric/conversion/cast.hpp>
 

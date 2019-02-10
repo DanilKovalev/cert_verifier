@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include "utils.h"
 #include "utils/StackOf.h"
 
@@ -7,26 +7,29 @@
 #include "x509/extensions/CrlDistributionPoints.h"
 #include <openssl/x509v3.h>
 #include <iostream>
+#include <unordered_map>
 
 TEST_CASE( "extension print", "[cert][extension]" )
 {
-    std::string path = "content/";
-    SECTION("cert")
-        path += "cert.pem";
-
-    SECTION("telegramorg")
-        path += "telegramorg.crt";
-
-    SECTION("toxchat.crt")
-        path += "toxchat.crt";
-
-    std::string pem = read_file(path);
-    X509Certificate certificate = X509Certificate::from_pem(pem);
-
-    StackOf<X509Extension> extensions = certificate.get_extensions();
-    for(const auto& extension : extensions)
+    std::unordered_map<std::string, std::string> content
     {
-        
+            {"simple pem", "cert.pem"},
+            {"telegramorg", "telegramorg.crt"},
+            {"toxchat.crt", "toxchat.crt"}
+    };
+
+
+    for(const auto& kv : content)
+    {
+        DYNAMIC_SECTION("certificate name: " << kv.first)
+        {
+            std::string pem = read_file("content/" + kv.second);
+            X509Certificate certificate = X509Certificate::from_pem(pem);
+            StackOf<X509Extension> extensions = certificate.get_extensions();
+
+            for(const auto& extension : extensions)
+                (void) extension;
+        }
     }
 }
 

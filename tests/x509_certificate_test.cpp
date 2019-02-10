@@ -1,4 +1,5 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
+#include <unordered_map>
 #include "utils.h"
 
 #include "template_tests.h"
@@ -6,23 +7,24 @@
 
 TEST_CASE( "Cert read ", "[cert]" )
 {
-    std::string path = "content/";
-    SECTION("cert")
-        path += "cert.pem";
+    std::unordered_map<std::string, std::string> content
+            {
+                    {"simple pem", "cert.pem"},
+                    {"telegramorg", "telegramorg.crt"},
+                    {"toxchat.crt", "toxchat.crt"},
+                    {"letsEncrypt.crt", "LetsEncryptAuthorityX3.crt"}
+            };
 
-    SECTION("telegramorg")
-        path += "telegramorg.crt";
-
-    SECTION("toxchat.crt")
-        path += "toxchat.crt";
-
-    SECTION("letsEncrypt.crt")
-        path += "LetsEncryptAuthorityX3.crt";
-
-    std::string pem = read_file(path);
-    REQUIRE_NOTHROW(X509Certificate::from_pem(pem));
-    X509Certificate cert = X509Certificate::from_pem(pem);
-    REQUIRE_NOTHROW(X509Certificate::from_der(cert.to_der()));
+    for (const auto& kv : content )
+    {
+        DYNAMIC_SECTION("cert name: " << kv.first)
+        {
+            std::string pem = read_file("content/" + kv.second);
+            REQUIRE_NOTHROW(X509Certificate::from_pem(pem));
+            X509Certificate cert = X509Certificate::from_pem(pem);
+            REQUIRE_NOTHROW(X509Certificate::from_der(cert.to_der()));
+        }
+    }
 }
 
 TEST_CASE("Cert memory test", "[store][x509]")

@@ -1,5 +1,5 @@
 #pragma once
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 template <typename T>
 void move_test(T& type1)

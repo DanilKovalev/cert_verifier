@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <iostream>
 #include "utils.h"
 
@@ -17,7 +17,6 @@ TEST_CASE( "x509StoreCtx test", "[storectx][x509]")
     X509Store store;
     store.loadDefaultLocation();
     X509StoreCtx storeCtx;
-    //std::string path = "content/telegramorg.crt";
     std::string path = "content/LetsEncryptAuthorityX3.crt";
     std::string pem = read_file(path);
 
@@ -33,7 +32,6 @@ TEST_CASE( "x509StoreCtx test", "[storectx][x509]")
     CHECK_FALSE(storeCtx.verify(cert, exception));
     REQUIRE(exception.code().value() == X509_V_ERR_HOSTNAME_MISMATCH);
 
-//    size_t i = 0;
     for(const auto& chainCert : storeCtx.getChain())
     {
         //std::cout << i << " " <<  chainCert.get_subject_name() << std::endl;

@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <bio/bio_ostring.h>
 #include <boost/numeric/conversion/cast.hpp>
 #include <SslException.h>

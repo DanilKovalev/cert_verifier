@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include "utils.h"
 #include "template_tests.h"
 
@@ -14,13 +14,9 @@ TEST_CASE( "Build chain test", "[cert][connect]" )
     StackOf<X509Certificate> additionalCertificates;
     std::string path = "content/";
     std::string hostName;
-    SECTION("telegram")
-    {
-        //additionalCertificates.push(read_cert(path + "GoDaddySecureCertificateAuthority-G2.crt"));
 
-        path += "telegramorg.crt";
-        hostName = "telegram.org";
-    }
+    path += "telegramorg.crt";
+    hostName = "telegram.org";
 
     X509Certificate certificate = read_cert(path);
 
@@ -50,8 +46,6 @@ TEST_CASE( "Build chain test", "[cert][connect]" )
     X509Extension extension = *it;
     AuthorityInformationAccess authorityInformationAccess(extension);
 
-    std::cout << authorityInformationAccess.oscp() << std::endl;
-    std::cout << authorityInformationAccess.ca_issuer() << std::endl;
 //    std::cout << "body: \n"<< download(authorityInformationAccess.ca_issuer()) << std::endl;
 
     X509Certificate additionalCert = X509Certificate::from_der(HttpClient::request(authorityInformationAccess.ca_issuer()));
@@ -64,8 +58,4 @@ TEST_CASE( "Build chain test", "[cert][connect]" )
 //    storeCtx.setParameters(X509VerifyParam());
     storeCtx.setAdditionalCertificates(additionalCertificates);
     CHECK(storeCtx.verify(certificate, exception));
-
-    std::cout << exception.what() << std::endl;
-    std::cout << exception.code().value() << std::endl;
-    std::cout << storeCtx.getErrorDepth() << std::endl;
 }
