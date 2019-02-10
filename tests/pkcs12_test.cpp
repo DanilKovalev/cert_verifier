@@ -28,7 +28,7 @@ TEST_CASE( "Pkcs12 create", "[pkcs12]" )
 {
     auto der = read_binary_file("content/1571753451.p12");
     Pkcs12 pkcs12 = Pkcs12::fromDer(der.data(), der.size());
-    Pkcs12Data data = pkcs12.parse("test");
+    Pkcs12Content data = pkcs12.parse("test");
 
     REQUIRE_NOTHROW(pkcs12 = Pkcs12::create(data, ""));
     REQUIRE_NOTHROW(data =  pkcs12.parse(""));

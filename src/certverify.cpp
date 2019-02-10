@@ -17,6 +17,7 @@ static po::variables_map init_options(int argc, char** argv)
     desc.add_options()
             ("help,h", "produce help message")
             ("verbose,v", "verbose log mode")
+            ("certificate", po::value<std::string>() , "certificate to validate")
             ;
 
     po::variables_map vm;
@@ -91,23 +92,20 @@ std::unique_ptr<AuthorityInformationAccess> findAuthorityInformationAccess(X509C
 
 int main(int argc, char** argv)
 {
+    auto& ssl_instance = Instance::get();
+    (void)ssl_instance;
+
     po::variables_map vm = init_options(argc, argv);
 
-    /*Pkcs12Data data;
-
-    data.cert = read_certificate(vm["certificate"].as<std::string>());
-    StackOf<X509Certificate> additionalCerts;
-
-    StackOf<X509Certificate> additionalCertificates;
-    X509Certificate curCert = data.cert;
+    Pkcs12Content data = Pkcs12Content::createEmpty();
+    X509Certificate curCert = read_certificate(vm["certificate"].as<std::string>());
     while (auto infoAccess = findAuthorityInformationAccess(curCert))
     {
-        X509Certificate additionalCert = X509Certificate::from_der(HttpClient::request(infoAccess.ca_issuer()));
+        X509Certificate additionalCert = X509Certificate::from_der(HttpClient::request(infoAccess->ca_issuer()));
         data.ca.push(additionalCert);
         curCert = additionalCert;
     }
 
     Pkcs12::create(data, "").toDer();
-    auto& ssl_instance = Instance::get();
-    (void)ssl_instance;*/
+
 }

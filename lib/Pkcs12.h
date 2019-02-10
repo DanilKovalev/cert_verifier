@@ -9,11 +9,13 @@
 #include <string>
 #include <vector>
 
-struct Pkcs12Data
+struct Pkcs12Content
 {
-    PrivateKey pkey;
+    PrivateKey pKey;
     X509Certificate cert;
     StackOf<X509Certificate> ca;
+
+    static Pkcs12Content createEmpty();
 };
 
 class Pkcs12
@@ -28,8 +30,8 @@ public:
 
     void swap(Pkcs12& other) noexcept;
 
-    Pkcs12Data parse(const std::string& pass = "");
-    static Pkcs12 create(Pkcs12Data& data, const std::string& pass = "");
+    Pkcs12Content parse(const std::string& pass = "");
+    static Pkcs12 create(Pkcs12Content& data, const std::string& pass = "");
 
     void changePassword(const std::string& newPwd, const std::string& oldPwd = "");
     static Pkcs12 fromDer(const uint8_t *bytes, size_t size);

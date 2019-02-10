@@ -76,7 +76,7 @@ void Pkcs12::swap(Pkcs12& other) noexcept
     std::swap(this->m_pkcs12, other.m_pkcs12);
 }
 
-Pkcs12Data Pkcs12::parse(const std::string& pass)
+Pkcs12Content Pkcs12::parse(const std::string& pass)
 {
     EVP_PKEY *pkey = nullptr;
     X509 *pCert = nullptr;
@@ -85,21 +85,22 @@ Pkcs12Data Pkcs12::parse(const std::string& pass)
     if(PKCS12_parse(m_pkcs12, pass.c_str(), &pkey, &pCert, &ca) != 1)
         throw SslException("PKCS12_parse");
 
-    return Pkcs12Data{.pkey = PrivateKey(pkey, true),
+    return Pkcs12Content{.pKey = PrivateKey(pkey, true),
                       .cert = X509Certificate(pCert, true),
                       .ca = StackOf<X509Certificate>(reinterpret_cast<struct stack_st*>(ca), true)};
 }
 
-Pkcs12 Pkcs12::create(Pkcs12Data& data, const std::string& pass)
+Pkcs12 Pkcs12::create(Pkcs12Content& data, const std::string& pass)
 {
-    PKCS12* result = PKCS12_create(pass.c_str(), nullptr, data.pkey.raw(), data.cert.raw(), reinterpret_cast<stack_st_X509*>(data.ca.raw()), 0, 0, 0, 0, 0);
+    PKCS12* result = PKCS12_create(pass.c_str(), nullptr, data.pKey.raw(), data.cert.raw(), reinterpret_cast<stack_st_X509*>(data.ca.raw()), 0, 0, 0, 0, 0);
     if(result == nullptr)
         throw SslException("PKCS12_create");
 
     return Pkcs12(result, true);
 }
 
-
-
-
+Pkcs12Content Pkcs12Content::createEmpty()
+{
+    return Pkcs12Content{PrivateKey(nullptr, false), X509Certificate(nullptr, false), StackOf<X509Certificate>()};
+}
 
