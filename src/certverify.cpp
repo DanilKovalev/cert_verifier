@@ -4,7 +4,7 @@
 #include "utils/StackOf.h"
 #include "http/HttpClient.h"
 
-#include "Pkcs12.h"
+#include "pkcs/Pkcs12.h"
 #include <boost/program_options.hpp>
 #include <iostream>
 #include <fstream>

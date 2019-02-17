@@ -16,7 +16,8 @@ function(APPEND_COVERAGE_COMPILER_FLAGS TARGET_NAME)
         message(FATAL_ERROR "Target is not set")
     endif()
 
-    target_compile_options(${TARGET_NAME} PRIVATE --coverage -fprofile-dir=${COVERAGE_OUTPUT_DIRECTORY}/data)
+    #target_compile_options(${TARGET_NAME} PRIVATE --coverage -fprofile-dir=${COVERAGE_OUTPUT_DIRECTORY})
+    target_compile_options(${TARGET_NAME} PRIVATE --coverage)
     target_link_libraries(${TARGET_NAME} PRIVATE -lgcov)
     message(STATUS "Appending code coverage compiler flags for target: ${TARGET_NAME}")
 

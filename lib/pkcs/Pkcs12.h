@@ -33,9 +33,10 @@ public:
     Pkcs12Content parse(const std::string& pass = "");
     static Pkcs12 create(Pkcs12Content& data, const std::string& pass = "");
 
-    void changePassword(const std::string& newPwd, const std::string& oldPwd = "");
     static Pkcs12 fromDer(const uint8_t *bytes, size_t size);
     std::vector<uint8_t> toDer() const;
+
+    void changePassword(const std::string& newPwd, const std::string& oldPwd = "");
 
 private:
     void free() noexcept;
