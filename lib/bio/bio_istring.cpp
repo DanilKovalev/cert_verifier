@@ -38,6 +38,9 @@ size_t  bio_istring::get_line(char *s, size_t nRead, char delimiter)
     size_t lineLength = 0;
     for(size_t i = 0; i < nRead; i++)
     {
+        if(m_offset + i > m_pStr->size())
+            break;
+
         if ((*m_pStr)[m_offset + i] == delimiter)
         {
             lineLength = i + 1;
