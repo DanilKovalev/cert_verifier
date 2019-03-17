@@ -77,6 +77,12 @@ std::string X509Certificate::get_subject_name() const
     return std::to_string(name);
 }
 
+void X509Certificate::acquire()
+{
+    if (!m_acquired)
+        m_cert = duplicate(m_cert);
+}
+
 X509* X509Certificate::duplicate(X509 *pCert)
 {
     X509* result = X509_dup(pCert);

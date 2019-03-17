@@ -91,6 +91,16 @@ public:
         return Type(toRawType(sk_value(m_stack, i)), false);
     }
 
+    const Type front() const
+    {
+        return Type(toRawType(sk_value(m_stack, 0)), false);
+    }
+
+    const Type back() const
+    {
+        return Type(toRawType(sk_value(m_stack, size() - 1)), false);
+    }
+
     void push(const Type& value)
     {
         Type newValue(value);
@@ -135,7 +145,7 @@ public:
     {
         return StackOfIterator<const Type>(m_stack);
     }
-    
+
     StackOfIterator<const Type> cend() noexcept
     {
         return StackOfIterator<const Type>(m_stack, size());

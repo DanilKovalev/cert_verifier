@@ -16,5 +16,15 @@ TEST_CASE( "pkcs7signed get content", "[pkcs7]")
     CHECK(pkcs7Signed.getCertificates().size() != 0);
 }
 
+TEST_CASE( "pkcs7Signed memory test", "[pkcs7]")
+{
+    auto der = read_binary_file("content/dstrootcax3.p7c");
+    Pkcs7 pkcs7 = Pkcs7::fromDer(der);
+    Pkcs7Signed pkcs7Signed (std::move(pkcs7));
+
+    CHECK_NOTHROW(move_test(pkcs7Signed));
+    CHECK_NOTHROW(copy_test(pkcs7Signed));
+}
+
 
 
