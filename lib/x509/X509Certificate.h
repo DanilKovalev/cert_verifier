@@ -25,8 +25,10 @@ public:
     void swap(X509Certificate& other) noexcept;
 
     std::vector<uint8_t> digest(const EVP_MD* type) const;
-    std::string get_issuer_name() const;
-    std::string get_subject_name() const;
+    std::string getIssuerName() const;
+    std::string getSubjectName() const;
+
+    bool isSelfSigned() const;
 
     X509* raw();
     const X509* raw() const;

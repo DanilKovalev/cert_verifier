@@ -1,5 +1,6 @@
 #include "Instance.h"
 #include "x509/X509Certificate.h"
+#include "x509/X509Store.h"
 #include "x509/extensions/AuthorityInformationAccess.h"
 #include "pkcs/Pkcs12.h"
 #include "pkcs/Pkcs7Signed.h"
@@ -80,6 +81,7 @@ X509Certificate read_certificate(const std::string& filePath)
 
 X509Certificate download_certificate(const std::string& url)
 {
+    std::cout << "Downloading: " << url << std::endl;
     std::vector<uint8_t> data = HttpClient::request(url);
 
     if( boost::algorithm::ends_with(url, ".p7c"))
@@ -121,15 +123,19 @@ int main(int argc, char** argv)
 
     po::variables_map vm = init_options(argc, argv);
 
-    Pkcs12Content data = Pkcs12Content::createEmpty();
+    Pkcs12Content pkcs12Data = Pkcs12Content::createEmpty();
     X509Certificate curCert = read_certificate(vm["certificate"].as<std::string>());
-    while (auto infoAccess = findAuthorityInformationAccess(curCert))
+    pkcs12Data.cert = curCert;
+    while (!curCert.isSelfSigned() )
     {
+        std::cout << "Certificate subject: " << curCert.getSubjectName() << std::endl;
+        std::cout << "Certificate issuer : " << curCert.getIssuerName() << std::endl;
+        auto infoAccess = findAuthorityInformationAccess(curCert);
         X509Certificate additionalCert = download_certificate(infoAccess->ca_issuer());
-        data.ca.push(additionalCert);
+        pkcs12Data.ca.push(additionalCert);
         curCert = additionalCert;
     }
 
-    Pkcs12::create(data, "").toDer();
+    Pkcs12::create(pkcs12Data, "").toDer();
 
 }

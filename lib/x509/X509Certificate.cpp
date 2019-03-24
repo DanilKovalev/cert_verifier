@@ -13,7 +13,8 @@
 X509Certificate::X509Certificate(X509 *pCert, bool acquire) noexcept
 : m_cert(pCert)
 , m_acquired(acquire)
-{}
+{
+}
 
 X509Certificate::X509Certificate(const X509Certificate& rhs)
 : m_cert(duplicate(rhs.m_cert))
@@ -59,7 +60,7 @@ std::vector<uint8_t> X509Certificate::digest(const EVP_MD* type) const
     return fingerprint;
 }
 
-std::string X509Certificate::get_issuer_name() const
+std::string X509Certificate::getIssuerName() const
 {
     X509_NAME* name = X509_get_issuer_name(m_cert);
     if(name == nullptr)
@@ -68,13 +69,18 @@ std::string X509Certificate::get_issuer_name() const
     return std::to_string(name);
 }
 
-std::string X509Certificate::get_subject_name() const
+std::string X509Certificate::getSubjectName() const
 {
     X509_NAME* name = X509_get_subject_name(m_cert);
     if(name == nullptr)
         throw SslException("X509_get_subject_name");
 
     return std::to_string(name);
+}
+
+bool X509Certificate::isSelfSigned() const
+{
+    return getIssuerName() == getSubjectName();
 }
 
 void X509Certificate::acquire()

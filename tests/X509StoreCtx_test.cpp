@@ -34,8 +34,6 @@ TEST_CASE( "x509StoreCtx test", "[storectx][x509]")
 
     for(const auto& chainCert : storeCtx.getChain())
     {
-        //std::cout << i << " " <<  chainCert.get_subject_name() << std::endl;
-        //i ++;
         (void)(chainCert);
     }
 }
