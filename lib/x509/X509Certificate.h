@@ -4,21 +4,22 @@
 #include "utils/ObjectHelper.h"
 #include "utils/StackOf.h"
 
+#include <openssl/x509.h>
+
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <openssl/x509.h>
-
 class X509Certificate : public ObjectHelper<X509, X509Certificate>
 {
-  public:
-    using RawType = X509;
-
+  public: ///@todo: make private
     X509Certificate(X509* pCert, bool acquire) noexcept
       : ObjectHelper(pCert, acquire)
     {
     }
+
+  public:
+    using RawType = X509;
 
     X509Certificate(const X509Certificate& other)
       : ObjectHelper(other)
@@ -36,18 +37,28 @@ class X509Certificate : public ObjectHelper<X509, X509Certificate>
         return *this;
     }
 
-    X509Certificate& operator=(X509Certificate&& other)
+    X509Certificate& operator=(X509Certificate&& other) noexcept
     {
         ObjectHelper::operator=(std::move(other));
         return *this;
     }
 
-    ~X509Certificate() = default;
-
     void swap(X509Certificate& other) noexcept
     {
         ObjectHelper::swap(other);
     }
+
+    static X509Certificate makeWrapper(RawType* raw)
+    {
+        return X509Certificate(raw, false);
+    }
+
+    static X509Certificate makeAttacheds(RawType* raw)
+    {
+        return X509Certificate(duplicate(raw), true);
+    }
+
+    ~X509Certificate() = default;
 
     std::vector<uint8_t> digest(const EVP_MD* type) const;
     std::string getIssuerName() const;

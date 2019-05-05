@@ -65,6 +65,15 @@ class ObjectHelper
         m_isAcquired = false;
     }
 
+    void acquire()
+    {
+        if(m_isAcquired)
+            return;
+
+        m_raw = Type::duplicate(m_raw);
+        m_isAcquired = true;
+    }
+
     void swap(ObjectHelper& other) noexcept
     {
         std::swap(other.m_raw, this->m_raw);

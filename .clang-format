@@ -65,10 +65,12 @@ IncludeCategories:
     Priority:        1
   - Regex:           '^<boost/'
     Priority:        2
-  - Regex:           '^<.*\.h'
-    Priority:        4
-  - Regex:           '^<.*'
+  - Regex:           '^<openssl/'
     Priority:        3
+  - Regex:           '^<.*\.h'
+    Priority:        100
+  - Regex:           '^<.*'
+    Priority:        99
 IncludeIsMainRegex: '(Test)?$'
 IndentCaseLabels: true
 IndentPPDirectives: None
