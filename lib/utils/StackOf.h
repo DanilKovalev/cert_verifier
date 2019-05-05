@@ -22,7 +22,7 @@ public:
     StackOf() : m_stack(createStack()) , m_acquired(true)
     {};
 
-    explicit StackOf(const struct stack_st* stack) : m_stack(duplicate(stack)), m_acquired(true){};
+    explicit StackOf(const struct stack_st* stack) : m_stack(duplicate(stack)){};
 
     StackOf(struct stack_st* stack, bool acquire) : m_stack(stack), m_acquired(acquire){};
 
