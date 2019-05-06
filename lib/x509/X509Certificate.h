@@ -59,10 +59,4 @@ class X509Certificate : public ObjectHolder<X509, X509Certificate>
     bool hasExtensions() const noexcept;
 };
 
-namespace std
-{
-inline void swap(X509Certificate& a, X509Certificate& b) noexcept
-{
-    a.swap(b);
-}
-}
+

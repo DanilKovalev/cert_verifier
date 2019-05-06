@@ -42,10 +42,3 @@ class X509Extension : public ObjectHolder<X509_EXTENSION, X509Extension>
     int nid() const noexcept;
 };
 
-namespace std
-{
-inline void swap(X509Extension & a, X509Extension & b) noexcept
-{
-    a.swap(b);
-}
-}

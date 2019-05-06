@@ -122,3 +122,11 @@ class ObjectHolder
     bool m_isAcquired;
 };
 
+namespace std
+{
+template <class T>
+inline void swap(ObjectHolder<typename T::RawType, T>& a, ObjectHolder<typename T::RawType, T>& b) noexcept
+{
+    a.swap(b);
+}
+}
