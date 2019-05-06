@@ -1,7 +1,7 @@
 #pragma once
 
 #include "extensions/X509Extension.h"
-#include "utils/ObjectHelper.h"
+#include "utils/ObjectHolder.h"
 #include "utils/StackOf.h"
 
 #include <openssl/x509.h>
@@ -10,52 +10,32 @@
 #include <utility>
 #include <vector>
 
-class X509Certificate : public ObjectHelper<X509, X509Certificate>
+class X509Certificate : public ObjectHolder<X509, X509Certificate>
 {
+    friend class ObjectHelper;
+
   public: ///@todo: make private
     X509Certificate(X509* pCert, bool acquire) noexcept
-      : ObjectHelper(pCert, acquire)
+      : ObjectHolder(pCert, acquire)
     {
     }
 
   public:
     using RawType = X509;
 
-    X509Certificate(const X509Certificate& other)
-      : ObjectHelper(other)
-    {
-    }
-
-    X509Certificate(X509Certificate&& other) noexcept
-      : ObjectHelper(std::move(other))
-    {
-    }
+    X509Certificate(const X509Certificate& other) = default;
+    X509Certificate(X509Certificate&& other) = default;
 
     X509Certificate& operator=(const X509Certificate& other)
     {
-        ObjectHelper::operator=(other);
+        ObjectHolder::operator=(other);
         return *this;
     }
 
     X509Certificate& operator=(X509Certificate&& other) noexcept
     {
-        ObjectHelper::operator=(std::move(other));
+        ObjectHolder::operator=(std::move(other));
         return *this;
-    }
-
-    void swap(X509Certificate& other) noexcept
-    {
-        ObjectHelper::swap(other);
-    }
-
-    static X509Certificate makeWrapper(RawType* raw)
-    {
-        return X509Certificate(raw, false);
-    }
-
-    static X509Certificate makeAttacheds(RawType* raw)
-    {
-        return X509Certificate(duplicate(raw), true);
     }
 
     ~X509Certificate() = default;
