@@ -1,40 +1,32 @@
 #pragma once
 
+#include "utils/ObjectHolder.h"
+
 #include <openssl/evp.h>
 
 #include <string>
 
-class PrivateKey
+class PrivateKey : public ObjectHolder<EVP_PKEY, PrivateKey>
 {
-public:
-    PrivateKey(EVP_PKEY* pKey, bool acquire) noexcept;
-    PrivateKey(const PrivateKey& rhs) = delete;
-    PrivateKey(PrivateKey&& rhs) noexcept;
-    PrivateKey& operator=(const PrivateKey& rhs) = delete;
-    PrivateKey& operator=(PrivateKey&& rhs) noexcept;
+  public:
+    PrivateKey(EVP_PKEY* raw, bool acquire) noexcept
+      : ObjectHolder(raw, acquire)
+    {
+    }
+    PrivateKey(const PrivateKey& other) = delete;
+    PrivateKey(PrivateKey&& other) = default;
+    PrivateKey& operator=(const PrivateKey& other) = delete;
+    PrivateKey& operator=(PrivateKey&& other) noexcept
+    {
+        ObjectHolder::operator=(std::move(other));
+        return *this;
+    }
 
-    ~PrivateKey() noexcept;
-    void swap(PrivateKey& other) noexcept;
+    ~PrivateKey() = default;
 
-    EVP_PKEY* raw() noexcept;
-    const EVP_PKEY* raw() const noexcept;
-
-    static PrivateKey from_pem(const std::string & pem);
+    static PrivateKey from_pem(const std::string& pem);
     std::string to_pem() const;
 
-private:
-    void free() noexcept;
-
-private:
-    EVP_PKEY* m_key;
-    bool m_acquired;
+    static void destroy(EVP_PKEY* raw) noexcept;
 };
 
-namespace std
-{
-    template <>
-    inline void swap(PrivateKey& a, PrivateKey& b) noexcept
-    {
-        a.swap(b);
-    }
-}
