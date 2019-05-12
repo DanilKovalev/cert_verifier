@@ -29,4 +29,3 @@ class PrivateKey : public ObjectHolder<EVP_PKEY, PrivateKey>
 
     static void destroy(EVP_PKEY* raw) noexcept;
 };
-

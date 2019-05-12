@@ -99,8 +99,8 @@ std::vector<uint8_t> X509Certificate::to_der() const
 
 StackOf<X509Extension> X509Certificate::get_extensions()
 {
-    X509_EXTENSIONS* extensions = sk_X509_EXTENSION_dup(X509_get0_extensions(m_raw));
-    return StackOf<X509Extension>(reinterpret_cast<struct stack_st*>(extensions));
+    const X509_EXTENSIONS* extensions = X509_get0_extensions(m_raw);
+    return StackOf<X509Extension>(reinterpret_cast<const struct stack_st*>(extensions));
 }
 
 bool X509Certificate::hasExtensions() const noexcept
