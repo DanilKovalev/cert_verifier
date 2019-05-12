@@ -1,8 +1,8 @@
 #pragma once
 
-#include "x509/X509Certificate.h"
-#include "utils/StackOf.h"
 #include "PrivateKey.h"
+#include "utils/StackOf.h"
+#include "x509/X509Certificate.h"
 
 #include <openssl/pkcs12.h>
 
@@ -18,40 +18,31 @@ struct Pkcs12Content
     static Pkcs12Content createEmpty();
 };
 
-class Pkcs12
+class Pkcs12 : public ObjectHolder<PKCS12, Pkcs12>
 {
-public:
-    Pkcs12(PKCS12* pkcs12, bool acquire);
-    Pkcs12(const Pkcs12& rhs) = delete;
-    Pkcs12(Pkcs12&& rhs) noexcept;
-    Pkcs12& operator= (const Pkcs12& rhs) = delete;
-    Pkcs12& operator= (Pkcs12&& rhs) noexcept;
-    ~Pkcs12();
+  public:
+    Pkcs12(PKCS12* raw, bool acquire)
+      : ObjectHolder(raw, acquire)
+    {
+    }
 
-    void swap(Pkcs12& other) noexcept;
+    Pkcs12(const Pkcs12&) = delete;
+    Pkcs12(Pkcs12&&) = default;
+    Pkcs12& operator=(const Pkcs12&) = delete;
+    Pkcs12& operator=(Pkcs12&& other) noexcept
+    {
+        ObjectHolder::operator=(std::move(other));
+        return *this;
+    }
+    ~Pkcs12() = default;
+
+    static void destroy(PKCS12* raw) noexcept;
 
     Pkcs12Content parse(const std::string& pass = "");
     static Pkcs12 create(Pkcs12Content& data, const std::string& pass = "");
 
-    static Pkcs12 fromDer(const uint8_t *bytes, size_t size);
+    static Pkcs12 fromDer(const uint8_t* bytes, size_t size);
     std::vector<uint8_t> toDer() const;
 
     void changePassword(const std::string& newPwd, const std::string& oldPwd = "");
-
-private:
-    void free() noexcept;
-
-private:
-    PKCS12* m_pkcs12;
-    bool m_acquired;
 };
-
-
-namespace std
-{
-    template <>
-    inline void swap(Pkcs12& a, Pkcs12& b) noexcept
-    {
-        a.swap(b);
-    }
-}

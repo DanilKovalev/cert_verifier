@@ -67,7 +67,7 @@ class ObjectHolder
 
     void release()
     {
-        if (m_isAcquired)
+        if (m_isAcquired && m_raw)
             Type::destroy(m_raw);
 
         m_raw = nullptr;
