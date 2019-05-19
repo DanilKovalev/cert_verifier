@@ -74,6 +74,7 @@ TEST_CASE( "CrlDistributionPoints", "[cert][extension][crl]" )
 
     REQUIRE(it != extensions.end());
     X509Extension extension = *it;
+    CHECK(!extension.is_critical());
     CrlDistributionPoints points = CrlDistributionPoints::fromExtension(extension);
 
     REQUIRE(points.size() == 1);
