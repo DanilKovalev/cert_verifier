@@ -1,6 +1,7 @@
 #pragma once
 
 #include "extensions/X509Extension.h"
+#include "utils/ObjectHelper.h"
 #include "utils/ObjectHolder.h"
 #include "utils/StackOf.h"
 
@@ -12,7 +13,7 @@
 
 class X509Certificate : public ObjectHolder<X509, X509Certificate>
 {
-    friend class ObjectHelper;
+    friend class ObjectHelper<X509Certificate>;
 
   public: ///@todo: make private
     X509Certificate(X509* pCert, bool acquire) noexcept
@@ -43,6 +44,8 @@ class X509Certificate : public ObjectHolder<X509, X509Certificate>
     std::vector<uint8_t> digest(const EVP_MD* type) const;
     std::string getIssuerName() const;
     std::string getSubjectName() const;
+    X509_NAME* getSubjectName2() const;
+    X509_NAME* getIssuerName2() const;
 
     bool isSelfSigned() const;
 

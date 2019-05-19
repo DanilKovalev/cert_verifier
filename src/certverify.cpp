@@ -1,16 +1,21 @@
 #include "Instance.h"
-#include "x509/X509Certificate.h"
-#include "x509/X509Store.h"
-#include "x509/extensions/AuthorityInformationAccess.h"
+#include "http/HttpClient.h"
 #include "pkcs/Pkcs12.h"
 #include "pkcs/Pkcs7Signed.h"
 #include "utils/StackOf.h"
+#include "x509/X509Certificate.h"
+#include "x509/X509Store.h"
+#include "x509/extensions/AuthorityInformationAccess.h"
 
-#include "http/HttpClient.h"
-#include <boost/program_options.hpp>
 #include <boost/algorithm/string.hpp>
-#include <iostream>
+#include <boost/program_options.hpp>
+
 #include <fstream>
+#include <iostream>
+
+#include <x509/X509StoreCtx.h>
+
+X509StoreCtx g_trustedStoreCtx;
 
 namespace po = boost::program_options;
 
@@ -93,14 +98,14 @@ X509Certificate download_certificate(const std::string& url)
             throw std::runtime_error("More than one certificates stored in pkcs7");
 
         X509Certificate cert = pkcs7.getCertificates().front();
-        cert.acquire();
+        cert.cloneIfNotAcquire();
         return cert;
     }
 
     return X509Certificate::from_der(data);
 }
 
-std::unique_ptr<AuthorityInformationAccess> findAuthorityInformationAccess(X509Certificate certificate)
+AuthorityInformationAccess getuthorityInformationAccess(X509Certificate certificate)
 {
     StackOf<X509Extension> extensions = certificate.get_extensions();
     auto it = std::find_if(extensions.begin(), extensions.end(),
@@ -109,12 +114,32 @@ std::unique_ptr<AuthorityInformationAccess> findAuthorityInformationAccess(X509C
                            });
 
     if (it == extensions.end())
-        return {};
+        throw std::runtime_error("No Authority Information Access extension found for certificate");
 
-    return std::make_unique<AuthorityInformationAccess>(*it);
+    return AuthorityInformationAccess(*it);
 }
 
+X509Certificate getIssuer(const X509Certificate& childCert)
+{
+    std::cout << "Getting child certificate for " << childCert.getSubjectName() << std::endl;
+    std::cout << "Issuer: " << childCert.getIssuerName() << std::endl;
 
+    std::optional<X509Certificate> issuerCert = g_trustedStoreCtx.findCertificateBySubject(childCert.getIssuerName2());
+    if (issuerCert.has_value())
+    {
+        std::cout << "Found in trusted store" << std::endl;
+        return issuerCert.value();
+    }
+
+    AuthorityInformationAccess infoAccess = getuthorityInformationAccess(childCert);
+    return download_certificate(infoAccess.ca_issuer());
+}
+
+void foo(X509_OBJECT* obj)
+{
+    X509Certificate cert(X509_OBJECT_get0_X509(obj), true);
+    std::cout << "trusted: " << X509_trusted(cert.raw()) << std::endl;
+}
 
 int main(int argc, char** argv)
 {
@@ -123,17 +148,26 @@ int main(int argc, char** argv)
 
     po::variables_map vm = init_options(argc, argv);
 
+    X509Store trustedStore;
+    trustedStore.setTrust(true);
+    trustedStore.loadDefaultLocation();
+
+    X509StoreCtx trustedStoreCtx;
+    g_trustedStoreCtx.setStore(std::move(trustedStore));
+
     Pkcs12Content pkcs12Data = Pkcs12Content::createEmpty();
     X509Certificate curCert = read_certificate(vm["certificate"].as<std::string>());
     pkcs12Data.cert = curCert;
     while (!curCert.isSelfSigned() )
     {
-        std::cout << "Certificate subject: " << curCert.getSubjectName() << std::endl;
-        std::cout << "Certificate issuer : " << curCert.getIssuerName() << std::endl;
-        auto infoAccess = findAuthorityInformationAccess(curCert);
-        X509Certificate additionalCert = download_certificate(infoAccess->ca_issuer());
-        pkcs12Data.ca.push(additionalCert);
-        curCert = additionalCert;
+        //        STACK_OF(X509) * res = X509_STORE_get1_cert(trustedStoreCtx.raw(), curCert.getSubjectName2());
+        //        std::cout << " 1 " << std::endl;
+        //        int num = sk_X509_num(res);
+
+        X509Certificate parentCert = getIssuer(curCert);
+        pkcs12Data.ca.push(parentCert);
+        curCert = parentCert;
+        std::cout << "--------" << std::endl;
     }
 
     Pkcs12::create(pkcs12Data, "").toDer();

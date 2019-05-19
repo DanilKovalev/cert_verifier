@@ -1,22 +1,24 @@
 #include "X509StoreCtx.h"
 
+#include "x509/X509Object.h"
+
 #include <utility>
 
 X509StoreCtx::X509StoreCtx()
-: m_raw(X509_STORE_CTX_new())
-, m_store()
-, m_param()
-, m_additionalCerts()
+  : m_raw(X509_STORE_CTX_new())
+  , m_store()
+  , m_param()
+  , m_additionalCerts()
 {
     if (!m_raw)
         throw SslException("X509_STORE_CTX_new");
 }
 
 X509StoreCtx::X509StoreCtx(X509StoreCtx&& other) noexcept
-: m_raw(std::exchange(other.m_raw, nullptr))
-, m_store(std::move(other.m_store))
-, m_param(std::move(other.m_param))
-, m_additionalCerts(std::move(other.m_additionalCerts))
+  : m_raw(std::exchange(other.m_raw, nullptr))
+  , m_store(std::move(other.m_store))
+  , m_param(std::move(other.m_param))
+  , m_additionalCerts(std::move(other.m_additionalCerts))
 {
 }
 
@@ -42,12 +44,12 @@ X509StoreCtx::~X509StoreCtx()
     free();
 }
 
-X509_STORE_CTX *X509StoreCtx::raw()
+X509_STORE_CTX* X509StoreCtx::raw()
 {
     return m_raw;
 }
 
-const X509_STORE_CTX *X509StoreCtx::raw() const
+const X509_STORE_CTX* X509StoreCtx::raw() const
 {
     return m_raw;
 }
@@ -60,6 +62,7 @@ void X509StoreCtx::swap(X509StoreCtx& other) noexcept
 void X509StoreCtx::setStore(X509Store&& store)
 {
     m_store = std::move(store);
+    init();
 }
 
 void X509StoreCtx::verify(X509Certificate& cert)
@@ -67,7 +70,7 @@ void X509StoreCtx::verify(X509Certificate& cert)
     init();
     setCertificate(cert);
     X509_STORE_CTX_set0_param(m_raw, m_param.detach());
-    if(X509_verify_cert(m_raw) != 1)
+    if (X509_verify_cert(m_raw) != 1)
         throw SslVerifyException(X509_STORE_CTX_get_error(m_raw));
 }
 
@@ -85,14 +88,16 @@ bool X509StoreCtx::verify(X509Certificate& cert, SslVerifyException& sslVerifyEx
     }
 }
 
-void X509StoreCtx::setCertificate(X509Certificate &cert) noexcept
+void X509StoreCtx::setCertificate(X509Certificate& cert) noexcept
 {
-    X509_STORE_CTX_set_cert(m_raw, cert.raw() );
+    X509_STORE_CTX_set_cert(m_raw, cert.raw());
 }
 
 void X509StoreCtx::init()
 {
-    if (X509_STORE_CTX_init(m_raw, m_store.raw(), nullptr, reinterpret_cast <stack_st_X509*>(m_additionalCerts.raw())) != 1)
+    X509_STORE_CTX_cleanup(m_raw);
+    if (X509_STORE_CTX_init(m_raw, m_store.raw(), nullptr, reinterpret_cast<stack_st_X509*>(m_additionalCerts.raw())) !=
+        1)
         throw SslException("X509_STORE_CTX_init");
 }
 
@@ -125,3 +130,12 @@ void X509StoreCtx::setAdditionalCertificates(StackOf<X509Certificate>&& certsCha
     m_additionalCerts = std::move(certsChain);
 }
 
+std::optional<X509Certificate> X509StoreCtx::findCertificateBySubject(X509_NAME* name)
+{
+    X509Object obj;
+    int res = X509_STORE_CTX_get_by_subject(m_raw, X509_LU_X509, name, obj.raw());
+    if (res)
+        return obj.toX509Certificate();
+
+    return std::optional<X509Certificate>();
+}

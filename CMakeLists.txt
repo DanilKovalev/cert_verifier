@@ -4,7 +4,7 @@ project(cert_verifier)
 option(ADD_COVERAGE "use codecoverage" OFF)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 add_definitions(-Weffc++ -Wall -Wextra -Wunused-parameter -Wstrict-overflow=5 -Wundef -Wshadow -Wcast-qual -Wcast-align -Wconversion
         -Wsign-conversion  -Wredundant-decls -Wdisabled-optimization -Woverloaded-virtual -Wctor-dtor-privacy -Wnon-virtual-dtor
         -Wlogical-op -Wunused-result -D_THREAD_SAFE)

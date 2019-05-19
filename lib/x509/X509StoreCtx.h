@@ -38,6 +38,8 @@ class X509StoreCtx
     StackOf<X509Certificate> getChain();
     int getErrorDepth() const noexcept;
 
+    std::optional<X509Certificate> findCertificateBySubject(X509_NAME* name);
+
     bool isCertificatePresent();
 
   private:

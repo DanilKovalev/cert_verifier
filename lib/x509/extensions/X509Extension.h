@@ -13,8 +13,6 @@ class X509Extension : public ObjectHolder<X509_EXTENSION, X509Extension>
     }
 
   public:
-    friend class ObjectHelper;
-
     typedef X509_EXTENSION RawType;
 
     X509Extension(const X509Extension& other) = default;

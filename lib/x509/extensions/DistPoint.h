@@ -1,5 +1,6 @@
 #pragma once
 
+#include "utils/ObjectHelper.h"
 #include "utils/ObjectHolder.h"
 
 #include <openssl/x509v3.h>
@@ -9,9 +10,9 @@
 
 class DistPoint : ObjectHolder<DIST_POINT, DistPoint>
 {
-    friend class ObjectHelper;
 
   public:
+    friend class ObjectHelper<DistPoint>;
     typedef DIST_POINT RawType;
 
     DistPoint(DIST_POINT* point, bool acquire)

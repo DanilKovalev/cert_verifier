@@ -5,17 +5,17 @@ class ObjectHelper
 {
   public:
 
-    static makeWrapper(T::RawType* raw)
+    static T makeWrapper(typename T::RawType* raw)
     {
         return T(raw, false);
     }
 
-    static makeAttached(T::RawType* raw)
+    static T makeAttached(typename T::RawType* raw)
     {
         return T(raw, false);
     }
 
-    static MakeCopied(T::RawType* raw)
+    static T MakeCopied(typename T::RawType* raw)
     {
         return T(T::duplicate(raw), true);
     }

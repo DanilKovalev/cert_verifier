@@ -37,6 +37,16 @@ std::string X509Certificate::getSubjectName() const
     return std::to_string(name);
 }
 
+X509_NAME* X509Certificate::getSubjectName2() const
+{
+    return X509_get_subject_name(m_raw);
+}
+
+X509_NAME* X509Certificate::getIssuerName2() const
+{
+    return X509_get_issuer_name(m_raw);
+}
+
 bool X509Certificate::isSelfSigned() const
 {
     return getIssuerName() == getSubjectName();

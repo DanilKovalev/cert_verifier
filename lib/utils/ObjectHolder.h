@@ -74,7 +74,7 @@ class ObjectHolder
         m_isAcquired = false;
     }
 
-    void acquire()
+    void cloneIfNotAcquire()
     {
         if (m_isAcquired)
             return;

@@ -8,7 +8,10 @@ class general_name
 public:
     general_name( GENERAL_NAME* name, bool acquire ) noexcept;
 
-    std::string get_string();
+    operator std::string() const;
+    const GENERAL_NAME* raw() const;
+    GENERAL_NAME* raw();
+
 
 private:
     GENERAL_NAME* m_name;
