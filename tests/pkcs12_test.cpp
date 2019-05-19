@@ -7,11 +7,16 @@
 #include "utils.h"
 #include "template_tests.h"
 
+TEST_CASE("Pkcs12 content", "[pkcs12]")
+{
+    REQUIRE_NOTHROW(Pkcs12Content::createEmpty());
+}
 
 TEST_CASE( "Pkcs12 read", "[pkcs12]" )
 {
     auto der = read_binary_file("content/1571753451.p12");
     Pkcs12 pkcs12 = Pkcs12::fromDer(der.data(), der.size());
+    REQUIRE(der == pkcs12.toDer());
 }
 
 TEST_CASE( "Pkcs12 enc", "[pkcs12]" )
