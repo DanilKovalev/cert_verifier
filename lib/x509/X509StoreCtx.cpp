@@ -130,10 +130,10 @@ void X509StoreCtx::setAdditionalCertificates(StackOf<X509Certificate>&& certsCha
     m_additionalCerts = std::move(certsChain);
 }
 
-std::optional<X509Certificate> X509StoreCtx::findCertificateBySubject(X509_NAME* name)
+std::optional<X509Certificate> X509StoreCtx::findCertificateBySubject(X509Name& name)
 {
     X509Object obj;
-    int res = X509_STORE_CTX_get_by_subject(m_raw, X509_LU_X509, name, obj.raw());
+    int res = X509_STORE_CTX_get_by_subject(m_raw, X509_LU_X509, name.raw(), obj.raw());
     if (res)
         return obj.toX509Certificate();
 

@@ -86,7 +86,7 @@ X509Certificate read_certificate(const std::string& filePath)
 
 X509Certificate download_certificate(const std::string& url)
 {
-    std::cout << "Downloading: " << url << std::endl;
+    std::cout << "Downloading from: " << url << std::endl;
     std::vector<uint8_t> data = HttpClient::request(url);
 
     if( boost::algorithm::ends_with(url, ".p7c"))
@@ -121,10 +121,10 @@ AuthorityInformationAccess getuthorityInformationAccess(X509Certificate certific
 
 X509Certificate getIssuer(const X509Certificate& childCert)
 {
-    std::cout << "Getting child certificate for " << childCert.getSubjectName() << std::endl;
-    std::cout << "Issuer: " << childCert.getIssuerName() << std::endl;
+    std::cout << "Looking: " << childCert.getIssuerName().toString() << std::endl;
 
-    std::optional<X509Certificate> issuerCert = g_trustedStoreCtx.findCertificateBySubject(childCert.getIssuerName2());
+    X509Name issuerName = childCert.getIssuerName();
+    std::optional<X509Certificate> issuerCert = g_trustedStoreCtx.findCertificateBySubject(issuerName);
     if (issuerCert.has_value())
     {
         std::cout << "Found in trusted store" << std::endl;
@@ -160,10 +160,6 @@ int main(int argc, char** argv)
     pkcs12Data.cert = curCert;
     while (!curCert.isSelfSigned() )
     {
-        //        STACK_OF(X509) * res = X509_STORE_get1_cert(trustedStoreCtx.raw(), curCert.getSubjectName2());
-        //        std::cout << " 1 " << std::endl;
-        //        int num = sk_X509_num(res);
-
         X509Certificate parentCert = getIssuer(curCert);
         pkcs12Data.ca.push(parentCert);
         curCert = parentCert;

@@ -4,6 +4,7 @@
 #include "utils/ObjectHelper.h"
 #include "utils/ObjectHolder.h"
 #include "utils/StackOf.h"
+#include "utils/X509Name.h"
 
 #include <openssl/x509.h>
 
@@ -42,10 +43,8 @@ class X509Certificate : public ObjectHolder<X509, X509Certificate>
     ~X509Certificate() = default;
 
     std::vector<uint8_t> digest(const EVP_MD* type) const;
-    std::string getIssuerName() const;
-    std::string getSubjectName() const;
-    X509_NAME* getSubjectName2() const;
-    X509_NAME* getIssuerName2() const;
+    X509Name getIssuerName() const;
+    X509Name getSubjectName() const;
 
     bool isSelfSigned() const;
 
