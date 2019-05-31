@@ -22,5 +22,5 @@ X509Certificate X509Object::toX509Certificate() const
 {
     if (getType() != X509_LU_X509)
         throw std::runtime_error("Wrong X5009_OBJECT type to converting to X509_Certificate");
-    return ObjectHelper<X509Certificate>::MakeCopied(X509_OBJECT_get0_X509(m_raw));
+    return ObjectHelper<X509Certificate>::makeCopied(X509_OBJECT_get0_X509(m_raw));
 }

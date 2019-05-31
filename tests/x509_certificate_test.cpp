@@ -31,8 +31,7 @@ TEST_CASE("Cert memory test", "[store][x509]")
 {
     std::string path = "content/cert.pem";
     std::string pem = read_file(path);
-
     X509Certificate cert = X509Certificate::from_pem(pem);
-    REQUIRE_NOTHROW(copy_test(cert));
-    REQUIRE_NOTHROW(move_test(cert));
+
+    memory_tests(cert);
 }

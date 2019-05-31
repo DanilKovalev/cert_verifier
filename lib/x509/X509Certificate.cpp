@@ -22,13 +22,13 @@ std::vector<uint8_t> X509Certificate::digest(const EVP_MD* type) const
 X509Name X509Certificate::getIssuerName() const
 {
     X509_NAME* name = X509_get_issuer_name(m_raw);
-    return ObjectHelper<X509Name>::MakeCopied(name);
+    return ObjectHelper<X509Name>::makeCopied(name);
 }
 
 X509Name X509Certificate::getSubjectName() const
 {
     X509_NAME* name = X509_get_subject_name(m_raw);
-    return ObjectHelper<X509Name>::MakeCopied(name);
+    return ObjectHelper<X509Name>::makeCopied(name);
 }
 
 bool X509Certificate::isSelfSigned() const

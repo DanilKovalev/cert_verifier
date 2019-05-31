@@ -8,13 +8,6 @@ template<typename RawType, typename Type>
 class ObjectHolder
 {
   public:
-
-    template <typename Obj>
-    static Obj makeWrapper(typename Obj::RawType* raw)
-    {
-        return Obj(raw, false);
-    }
-
     ObjectHolder& operator=(const ObjectHolder& other)
     {
         if (this == &other)
@@ -31,6 +24,7 @@ class ObjectHolder
             return *this;
 
         this->swap(other);
+        other.release();
         return *this;
     }
 

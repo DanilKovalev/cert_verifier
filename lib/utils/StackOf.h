@@ -17,6 +17,7 @@ class StackOf : public ObjectHolder<stack_st, StackOf<Type>>
     typedef const Type& const_reference;
     typedef Type* pointer;
     typedef const Type* const_pointer;
+    typedef stack_st RawType;
 
   public:
     StackOf()

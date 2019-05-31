@@ -11,6 +11,8 @@
 class Pkcs7 : public ObjectHolder<PKCS7, Pkcs7>
 {
   public:
+    typedef PKCS7 RawType;
+
     Pkcs7(PKCS7* raw, bool acquire) noexcept
     : ObjectHolder(raw, acquire)
     {

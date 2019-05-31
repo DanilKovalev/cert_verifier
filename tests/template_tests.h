@@ -1,20 +1,55 @@
 #pragma once
+#include "type_traits"
+
+#include <iostream>
+
 #include <catch2/catch.hpp>
+#include <utils/ObjectHelper.h>
 
 template <typename T>
-void move_test(T& type1)
+void move_test(T& obj)
 {
-    T type2(std::move(type1));
-    type1 = std::move(type2);
+    T copy(std::move(obj));
+    obj = std::move(copy);
 };
 
-template <typename T>
-void copy_test(T& type1)
+template<class T>
+struct canDuplicate
 {
-    T type2(type1);
-    type1 = type2;
+    template<typename C>
+    static constexpr decltype(T::duplicate, bool()) test(int /* unused */)
+    {
+        return true;
+    }
+
+    template<typename C>
+    static constexpr bool test(...)
+    {
+        return false;
+    }
+
+    static constexpr bool value = test<T>(int());
 };
 
+template<class T>
+typename std::enable_if<!canDuplicate<T>::value>::type copy_test(T& obj)
+{
+    T copy(obj);
+    CHECK_NOTHROW(obj = copy);
+}
 
+template<class T>
+typename std::enable_if<canDuplicate<T>::value>::type copy_test(T& obj)
+{
+    T copy(obj);
+    CHECK_NOTHROW(obj = copy);
+    copy = ObjectHelper<T>::makeCopied(obj.raw());
+    obj = ObjectHelper<T>::makeAttached(copy.detach());
+}
 
-
+template<typename T>
+void memory_tests(T& obj)
+{
+    REQUIRE_NOTHROW(move_test(obj));
+    REQUIRE_NOTHROW(copy_test(obj));
+}

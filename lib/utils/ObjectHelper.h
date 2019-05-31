@@ -12,10 +12,10 @@ class ObjectHelper
 
     static T makeAttached(typename T::RawType* raw)
     {
-        return T(raw, false);
+        return T(raw, true);
     }
 
-    static T MakeCopied(typename T::RawType* raw)
+    static T makeCopied(typename T::RawType* raw)
     {
         return T(T::duplicate(raw), true);
     }
