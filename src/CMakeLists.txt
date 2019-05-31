@@ -5,4 +5,4 @@ file(GLOB_RECURSE SOURCE_FILES
         "*.h")
 
 add_executable(certverify ${SOURCE_FILES})
-target_link_libraries(certverify SslWrapper::lib -lboost_program_options )
+target_link_libraries(certverify SslWrapper::lib -lboost_program_options -lboost_system -lboost_filesystem)

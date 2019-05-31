@@ -1,4 +1,5 @@
 #include "Instance.h"
+#include "OutputDirectory.h"
 #include "http/HttpClient.h"
 #include "pkcs/Pkcs12.h"
 #include "pkcs/Pkcs7Signed.h"
@@ -22,11 +23,11 @@ namespace po = boost::program_options;
 static po::variables_map init_options(int argc, char** argv)
 {
     po::options_description desc("Allowed options", 1024);
-    desc.add_options()
-            ("help,h", "produce help message")
-            ("verbose,v", "verbose log mode")
-            ("certificate", po::value<std::string>() , "certificate to validate")
-            ;
+    desc.add_options()("help,h", "produce help message");
+    desc.add_options()("verbose,v", "verbose log mode");
+    desc.add_options()("certificate", po::value<std::string>(), "certificate to validate");
+    desc.add_options()(
+      "output-directory", po::value<std::string>()->default_value("/tmp/certverifier"), "output directory");
 
     po::variables_map vm;
     po::positional_options_description p;
@@ -38,20 +39,17 @@ static po::variables_map init_options(int argc, char** argv)
     {
         po::store(cmd.run(), vm);
     }
-    catch(std::exception &e){
-        std::cerr<<e.what();
-        std::cerr<<desc;
+    catch (std::exception& e)
+    {
+        std::cerr << e.what();
+        std::cerr << desc;
         exit(1);
     }
 
-    if(vm.count("verbose")){
-        std::cout<<"verbose";
-    }
-
-    if(vm.count("certificate") == 0)
+    if (vm.count("certificate") == 0)
     {
-        std::cerr<<"Certificate doesn't set" << std::endl;
-        std::cerr<<desc;
+        std::cerr << "Certificate doesn't set" << std::endl;
+        std::cerr << desc;
         exit(1);
     }
 
@@ -72,15 +70,15 @@ X509Certificate read_certificate(const std::string& filePath)
     std::string line;
     std::getline(file, line);
     file.seekg(0);
-    if (is_pem( line) )
+    if (is_pem(line))
     {
         std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         return X509Certificate::from_pem(content);
     }
     else
     {
-        std::vector<uint8_t > content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        return  X509Certificate::from_der(content);
+        std::vector<uint8_t> content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        return X509Certificate::from_der(content);
     }
 }
 
@@ -89,12 +87,12 @@ X509Certificate download_certificate(const std::string& url)
     std::cout << "Downloading from: " << url << std::endl;
     std::vector<uint8_t> data = HttpClient::request(url);
 
-    if( boost::algorithm::ends_with(url, ".p7c"))
+    if (boost::algorithm::ends_with(url, ".p7c"))
     {
         Pkcs7Signed pkcs7(Pkcs7::fromDer(data));
         if (pkcs7.getCertificates().size() == 0)
             throw std::runtime_error("No certificates found in pkcs7");
-        else if(pkcs7.getCertificates().size() > 1)
+        else if (pkcs7.getCertificates().size() > 1)
             throw std::runtime_error("More than one certificates stored in pkcs7");
 
         X509Certificate cert = pkcs7.getCertificates().front();
@@ -108,10 +106,9 @@ X509Certificate download_certificate(const std::string& url)
 AuthorityInformationAccess getuthorityInformationAccess(X509Certificate certificate)
 {
     StackOf<X509Extension> extensions = certificate.get_extensions();
-    auto it = std::find_if(extensions.begin(), extensions.end(),
-                           [](const X509Extension& ext) -> bool {
-                               return ext.nid() == NID_info_access;
-                           });
+    auto it = std::find_if(extensions.begin(), extensions.end(), [](const X509Extension& ext) -> bool {
+        return ext.nid() == NID_info_access;
+    });
 
     if (it == extensions.end())
         throw std::runtime_error("No Authority Information Access extension found for certificate");
@@ -148,6 +145,7 @@ int main(int argc, char** argv)
 
     po::variables_map vm = init_options(argc, argv);
 
+    OutputDirectory outDir(vm["output-directory"].as<std::string>());
     X509Store trustedStore;
     trustedStore.setTrust(true);
     trustedStore.loadDefaultLocation();
@@ -158,7 +156,7 @@ int main(int argc, char** argv)
     Pkcs12Content pkcs12Data = Pkcs12Content::createEmpty();
     X509Certificate curCert = read_certificate(vm["certificate"].as<std::string>());
     pkcs12Data.cert = curCert;
-    while (!curCert.isSelfSigned() )
+    while (!curCert.isSelfSigned())
     {
         X509Certificate parentCert = getIssuer(curCert);
         pkcs12Data.ca.push(parentCert);
@@ -166,6 +164,5 @@ int main(int argc, char** argv)
         std::cout << "--------" << std::endl;
     }
 
-    Pkcs12::create(pkcs12Data, "").toDer();
-
+    outDir.savePkcs12(Pkcs12::create(pkcs12Data, ""));
 }
