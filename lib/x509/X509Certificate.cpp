@@ -91,7 +91,7 @@ std::vector<uint8_t> X509Certificate::to_der() const
     return std::vector<uint8_t>(data, data + readSize);
 }
 
-StackOf<X509Extension> X509Certificate::get_extensions()
+X509ExtensionsStack X509Certificate::get_extensions()
 {
     const X509_EXTENSIONS* extensions = X509_get0_extensions(m_raw);
     return StackOf<X509Extension>(reinterpret_cast<const struct stack_st*>(extensions));

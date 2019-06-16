@@ -105,15 +105,13 @@ X509Certificate download_certificate(const std::string& url)
 
 AuthorityInformationAccess getuthorityInformationAccess(X509Certificate certificate)
 {
-    StackOf<X509Extension> extensions = certificate.get_extensions();
-    auto it = std::find_if(extensions.begin(), extensions.end(), [](const X509Extension& ext) -> bool {
-        return ext.nid() == NID_info_access;
-    });
+    X509ExtensionsStack extensions = certificate.get_extensions();
+    auto authInfo = extensions.findExtension<AuthorityInformationAccess>();
 
-    if (it == extensions.end())
+    if (!authInfo.has_value())
         throw std::runtime_error("No Authority Information Access extension found for certificate");
 
-    return AuthorityInformationAccess(*it);
+    return authInfo.value();
 }
 
 X509Certificate getIssuer(const X509Certificate& childCert)

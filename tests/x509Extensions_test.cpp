@@ -67,15 +67,12 @@ TEST_CASE( "CrlDistributionPoints", "[cert][extension][crl]" )
     StackOf<X509Extension> extensions = certificate.get_extensions();
 
     REQUIRE(certificate.hasExtensions());
-    auto it = std::find_if(extensions.begin(), extensions.end(),
-                           [](const X509Extension& ext) -> bool{
-                               return ext.nid() == NID_crl_distribution_points;
-                           });
+    auto extension = certificate.get_extensions().findExtension<CrlDistributionPoints>();
 
-    REQUIRE(it != extensions.end());
-    X509Extension extension = *it;
-    CHECK(!extension.is_critical());
-    CrlDistributionPoints points = CrlDistributionPoints::fromExtension(extension);
+    REQUIRE(extension.has_value());
+    CHECK(!extension.value().is_critical());
+    CrlDistributionPoints distPoitnsExtension = CrlDistributionPoints(extension.value());
+    auto points = distPoitnsExtension.getDistPoints();
 
     REQUIRE(points.size() == 1);
 

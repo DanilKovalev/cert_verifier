@@ -94,12 +94,12 @@ class StackOf : public ObjectHolder<stack_st, StackOf<Type>>
         return StackOfIterator<Type>(this->m_raw, size());
     }
 
-    StackOfIterator<const Type> cbegin() noexcept
+    StackOfIterator<const Type> cbegin() const noexcept
     {
         return StackOfIterator<const Type>(this->m_raw);
     }
 
-    StackOfIterator<const Type> cend() noexcept
+    StackOfIterator<const Type> cend() const noexcept
     {
         return StackOfIterator<const Type>(this->m_raw, size());
     }

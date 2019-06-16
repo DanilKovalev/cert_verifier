@@ -70,8 +70,13 @@ public:
     {
         return *m_type;
     }
-    
-private:
+
+    pointer operator->() const
+    {
+        return m_type.get();
+    }
+
+  private:
     static constexpr typename Type::RawType* toRawType(void* pRaw) noexcept
     {
         return static_cast<typename Type::RawType*>(pRaw);

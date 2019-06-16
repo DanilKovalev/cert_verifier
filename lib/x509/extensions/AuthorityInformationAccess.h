@@ -8,7 +8,10 @@
 class AuthorityInformationAccess : public X509Extension
 {
 public:
-    explicit AuthorityInformationAccess(X509Extension& ext);
+    static const int NID = NID_info_access;
+
+    explicit AuthorityInformationAccess(const X509Extension& ext);
+    explicit AuthorityInformationAccess(X509Extension&& ext);
     AuthorityInformationAccess(const AuthorityInformationAccess&) = default;
     AuthorityInformationAccess(AuthorityInformationAccess&&) = default;
 

@@ -10,7 +10,6 @@
 
 class DistPoint : ObjectHolder<DIST_POINT, DistPoint>
 {
-
   public:
     friend class ObjectHelper<DistPoint>;
     typedef DIST_POINT RawType;

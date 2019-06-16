@@ -1,6 +1,7 @@
 #pragma once
 
 #include "extensions/X509Extension.h"
+#include "extensions/X509ExtensionsStack.h"
 #include "utils/ObjectHelper.h"
 #include "utils/ObjectHolder.h"
 #include "utils/StackOf.h"
@@ -56,7 +57,7 @@ class X509Certificate : public ObjectHolder<X509, X509Certificate>
 
     std::string to_pem() const;
     std::vector<uint8_t> to_der() const;
-    StackOf<X509Extension> get_extensions();
+    X509ExtensionsStack get_extensions();
 
     bool hasExtensions() const noexcept;
 };

@@ -26,9 +26,12 @@ void X509Name::destroy(X509_NAME* raw) noexcept
 
 std::string std::to_string(const X509_NAME* raw)
 {
-    std::unique_ptr<char> ptrName(X509_NAME_oneline(raw, nullptr, 0));
-    if (!ptrName)
+    char* pName = X509_NAME_oneline(raw, nullptr, 0);
+    if (!pName)
         throw SslException("X509_NAME_oneline");
 
-    return ptrName.get();
+    std::string result(pName);
+    free(pName);
+
+    return result;
 }

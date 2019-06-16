@@ -7,17 +7,20 @@
 #include <string>
 #include <openssl/x509v3.h>
 
-class CrlDistributionPoints : public StackOf<DistPoint>
+class CrlDistributionPoints : public X509Extension
 {
 public:
-    CrlDistributionPoints(CRL_DIST_POINTS* raw, bool acquire);
-    CrlDistributionPoints(CrlDistributionPoints&& other) noexcept;
+    static const int NID = NID_crl_distribution_points;
 
-    CrlDistributionPoints& operator =(CrlDistributionPoints&& other) noexcept;
+    explicit CrlDistributionPoints(const X509Extension& ext);
+    explicit CrlDistributionPoints(X509Extension&& ext);
 
-    ~CrlDistributionPoints() override = default;
+    CrlDistributionPoints(const CrlDistributionPoints&) = default;
+    CrlDistributionPoints(CrlDistributionPoints&&) = default;
 
-    static CrlDistributionPoints fromExtension(X509Extension &ext);
+    ~CrlDistributionPoints() = default;
+
+    StackOf<DistPoint> getDistPoints();
 };
 
 
