@@ -1,7 +1,5 @@
 #pragma once
 
-#include "X509ExtensionsStack.h"
-
 template<typename ExtType>
 std::optional<ExtType> X509ExtensionsStack::findExtension() const noexcept
 {

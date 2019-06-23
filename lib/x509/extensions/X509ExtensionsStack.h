@@ -12,12 +12,12 @@ class X509ExtensionsStack : public StackOf<X509Extension>
     {
     }
 
-    X509ExtensionsStack(StackOf&& stack) noexcept
+    explicit X509ExtensionsStack(StackOf&& stack) noexcept
       : StackOf(stack)
     {
     }
 
-    X509ExtensionsStack(StackOf& stack)
+    explicit X509ExtensionsStack(StackOf& stack)
       : StackOf(stack)
     {
     }
