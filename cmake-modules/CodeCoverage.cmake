@@ -1,3 +1,20 @@
+function(GENERATE_COVERAGE TARGET_NAME)
+    set(options FORCE)
+    set(multiValueArgs NONE)
+    cmake_parse_arguments(PARSE_ARGV 1 COVERAGE "${options}" "${oneValueArgs}" "${multiValueArgs}")
+
+    if (NOT ADD_COVERAGE AND NOT COVERAGE_FORCE)
+        return()
+    endif ()
+    set(COVERAGE_GENERATOR ${TARGET_NAME}_coverage_report)
+
+    add_custom_target(${COVERAGE_GENERATOR}
+            COMMAND "rm" "-rf" "${COVERAGE_OUTPUT_DIRECTORY}/${TARGET_NAME}"
+            COMMAND "mkdir" "-p" "${COVERAGE_OUTPUT_DIRECTORY}/${TARGET_NAME}"
+            COMMAND "gcovr" "--html" "--delete" "--sort-percentage" "--html-details" "--root" "${CMAKE_SOURCE_DIR}" "-o" "${COVERAGE_OUTPUT_DIRECTORY}/${TARGET_NAME}/index.html"
+            )
+endfunction()
+
 function(APPEND_COVERAGE_COMPILER_FLAGS TARGET_NAME)
     set(options FORCE)
     set(oneValueArgs OUTPUT_DIR)
@@ -6,10 +23,6 @@ function(APPEND_COVERAGE_COMPILER_FLAGS TARGET_NAME)
 
     if (NOT ADD_COVERAGE AND NOT COVERAGE_FORCE)
         return()
-    endif()
-
-    if (COVERAGE_OUTPUT_DIR)
-        set(COVERAGE_OUTPUT_DIRECTORY ${COVERAGE_OUTPUT_DIR})
     endif()
 
     if(NOT TARGET_NAME)
