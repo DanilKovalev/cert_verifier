@@ -4,6 +4,7 @@
 #include "utils/ObjectHelper.h"
 #include "utils/ObjectHolder.h"
 #include "utils/StackOf.h"
+#include "utils/X509Name.h"
 
 #include <openssl/x509.h>
 
@@ -44,6 +45,7 @@ class X509Crl : ObjectHolder<X509_CRL, X509Crl>
 
     std::string toPem() const;
     std::vector<uint8_t> toDer() const;
+    X509Name getIssuer() const;
 
     static RawType* duplicate(RawType* raw);
     static void destroy(RawType* raw) noexcept;

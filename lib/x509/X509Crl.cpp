@@ -74,3 +74,12 @@ StackOf<X509Extension> X509Crl::getExtensions()
     const X509_EXTENSIONS* extensions = X509_CRL_get0_extensions(m_raw);
     return StackOf<X509Extension>(reinterpret_cast<const struct stack_st*>(extensions));
 }
+
+X509Name X509Crl::getIssuer() const
+{
+    X509_NAME* name = X509_CRL_get_issuer(m_raw);
+    if (name == nullptr)
+        throw SslException("Failed to call get issuer for crl");
+
+    return ObjectHelper<X509Name>::makeCopied(name);
+}

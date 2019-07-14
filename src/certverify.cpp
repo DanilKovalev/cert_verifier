@@ -7,6 +7,7 @@
 #include "x509/X509Certificate.h"
 #include "x509/X509Store.h"
 #include "x509/extensions/AuthorityInformationAccess.h"
+#include "x509/extensions/CrlDistributionPoints.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
@@ -114,6 +115,33 @@ AuthorityInformationAccess getuthorityInformationAccess(X509Certificate certific
     return authInfo.value();
 }
 
+CrlDistributionPoints getCrlDistributionPoints(X509Certificate& certificate)
+{
+    X509ExtensionsStack extensions = certificate.get_extensions();
+    auto crlDistPoints = extensions.findExtension<CrlDistributionPoints>();
+
+    if (!crlDistPoints.has_value())
+        throw std::runtime_error("No CRL Distribution Points extension found for certificate");
+
+    return crlDistPoints.value();
+}
+
+std::vector<X509Crl> GetCrls(X509Certificate& certificate)
+{
+    std::vector<X509Crl> result;
+    CrlDistributionPoints crlDistPoints = getCrlDistributionPoints(certificate);
+    for (DistPoint& point : crlDistPoints.getDistPoints())
+    {
+        for (std::string& url : point.get_distribution_point_names())
+        {
+            std::vector<uint8_t> data = HttpClient::request(url);
+            result.push_back(X509Crl::fromDer(data));
+        }
+    }
+
+    return result;
+}
+
 X509Certificate getIssuer(const X509Certificate& childCert)
 {
     std::cout << "Looking: " << childCert.getIssuerName().toString() << std::endl;
@@ -156,6 +184,9 @@ int main(int argc, char** argv)
     pkcs12Data.cert = curCert;
     while (!curCert.isSelfSigned())
     {
+        for (const X509Crl& crl : GetCrls(curCert))
+            outDir.saveCrl(crl);
+
         X509Certificate parentCert = getIssuer(curCert);
         pkcs12Data.ca.push(parentCert);
         curCert = parentCert;
