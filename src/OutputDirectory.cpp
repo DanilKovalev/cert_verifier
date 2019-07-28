@@ -6,7 +6,6 @@
 
 OutputDirectory::OutputDirectory(const bf::path& dirPath)
   : m_dirpath(dirPath)
-  , m_crlCount(0)
 {
     if (bf::exists(dirPath))
     {
@@ -40,9 +39,7 @@ void OutputDirectory::saveData(bf::path path, const std::vector<uint8_t>& data)
 
 void OutputDirectory::saveCrl(const X509Crl& crl)
 {
-    std::string name = std::to_string(m_crlCount) + ".crl";
-    bf::path fullPath = bf::path("crl")/name;
+    std::string crlName = crl.getIssuer().getEntry(NID_commonName).toString() + ".crl";
 
-    saveData(fullPath, crl.toDer());
-    m_crlCount++;
+    saveData(bf::path("crl") / crlName, crl.toDer());
 }

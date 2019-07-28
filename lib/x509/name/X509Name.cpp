@@ -1,13 +1,30 @@
 #include "X509Name.h"
 
-#include "ObjectHelper.h"
 #include "SslException.h"
 
-#include <memory>
+#include <iostream>
 
 std::string X509Name::toString() const
 {
     return std::to_string(m_raw);
+}
+
+std::optional<X509NameEntry> X509Name::findEntry(int nid)
+{
+    int idx = X509_NAME_get_index_by_NID(m_raw, nid, -1);
+    if (idx == -1)
+        return std::nullopt;
+
+    return ObjectHelper<X509NameEntry>::makeCopied(X509_NAME_get_entry(m_raw, idx));
+}
+
+X509NameEntry X509Name::getEntry(int nid)
+{
+    std::optional<X509NameEntry> entry = findEntry(nid);
+    if (!entry.has_value())
+        throw SslException("X509 name entry not found");
+
+    return entry.value();
 }
 
 X509_NAME* X509Name::duplicate(X509_NAME* raw)

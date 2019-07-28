@@ -5,7 +5,7 @@
 #include "utils/ObjectHelper.h"
 #include "utils/ObjectHolder.h"
 #include "utils/StackOf.h"
-#include "utils/X509Name.h"
+#include "x509/name/X509Name.h"
 
 #include <openssl/x509.h>
 

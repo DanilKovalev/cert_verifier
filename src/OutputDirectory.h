@@ -23,5 +23,4 @@ class OutputDirectory
 
   private:
     bf::path m_dirpath;
-    size_t m_crlCount;
 };

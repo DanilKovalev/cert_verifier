@@ -4,7 +4,7 @@
 #include "bio/bio_guards.h"
 #include "bio/bio_istring.h"
 #include "bio/bio_ostring.h"
-#include "utils/X509Name.h"
+#include "x509/name/X509Name.h"
 
 #include <boost/numeric/conversion/cast.hpp>
 

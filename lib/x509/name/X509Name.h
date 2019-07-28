@@ -1,9 +1,11 @@
 #pragma once
 
-#include "ObjectHolder.h"
+#include "X509NameEntry.h"
+#include "utils/ObjectHolder.h"
 
 #include <openssl/x509.h>
 
+#include <optional>
 #include <string>
 
 class X509Name : public ObjectHolder<X509_NAME, X509Name>
@@ -38,6 +40,8 @@ class X509Name : public ObjectHolder<X509_NAME, X509Name>
     static void destroy(X509_NAME* raw) noexcept;
 
     std::string toString() const;
+    std::optional<X509NameEntry> findEntry(int nid);
+    X509NameEntry getEntry(int nid);
 };
 
 namespace std

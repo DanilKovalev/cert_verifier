@@ -1,8 +1,8 @@
 #include "DistPoint.h"
 
 #include "../../SslException.h"
-#include "../../utils/X509Name.h"
 #include "../../utils/general_name.h"
+#include "x509/name/X509Name.h"
 
 #include <boost/numeric/conversion/cast.hpp>
 
